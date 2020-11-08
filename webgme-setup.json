@@ -5,14 +5,6 @@
         "src": "src/seeds/SC"
       }
     },
-    "decorators": {
-      "ContractStateDcoratorDecorator": {
-        "src": "src/decorators/ContractStateDcoratorDecorator"
-      },
-      "ContractStateDecorator": {
-        "src": "src/decorators/ContractStateDecorator"
-      }
-    },
     "visualizers": {
       "WebGMEReactViz": {
         "src": "panels/WebGMEReactViz/WebGMEReactVizPanel",
@@ -25,7 +17,6 @@
   },
   "dependencies": {
     "seeds": {},
-    "decorators": {},
     "visualizers": {}
   }
 }
