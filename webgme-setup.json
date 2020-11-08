@@ -1,0 +1,31 @@
+{
+  "components": {
+    "seeds": {
+      "SC": {
+        "src": "src/seeds/SC"
+      }
+    },
+    "decorators": {
+      "ContractStateDcoratorDecorator": {
+        "src": "src/decorators/ContractStateDcoratorDecorator"
+      },
+      "ContractStateDecorator": {
+        "src": "src/decorators/ContractStateDecorator"
+      }
+    },
+    "visualizers": {
+      "WebGMEReactViz": {
+        "src": "panels/WebGMEReactViz/WebGMEReactVizPanel",
+        "title": "WebGMEReactViz",
+        "panel": "src/visualizers/panels/WebGMEReactViz",
+        "secondary": false,
+        "widget": "src/visualizers/widgets/WebGMEReactViz"
+      }
+    }
+  },
+  "dependencies": {
+    "seeds": {},
+    "decorators": {},
+    "visualizers": {}
+  }
+}
