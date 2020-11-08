@@ -10,7 +10,6 @@ var config = require('./config.webgme'),
     
 
 config.requirejsPaths['scsrc'] = './src';
-//config.visualization.svgDirs = ['./src/svgs'];
 config.visualization.svgDirs.push(path.join(__dirname, '../src/svgs'));
 config.seedProjects.defaultProject = 'SC';
 config.plugin.allowServerExecution = true;
