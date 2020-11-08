@@ -1,3 +1,5 @@
+// This file was configured by pmeijer found at https://github.com/pmeijer/webgme-react-viz
+
 var path = require('path');
 var WrapperPlugin = require('wrapper-webpack-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');

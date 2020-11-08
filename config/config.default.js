@@ -1,3 +1,5 @@
+// This file was configured by VeriSolid found at https://github.com/VeriSolid/smart-contracts
+
 'use strict';
 
 var config = require('./config.webgme'),

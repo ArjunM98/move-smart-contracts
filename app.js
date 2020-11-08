@@ -1,4 +1,5 @@
-// jshint node: true
+// This file was configured by pmeijer found at https://github.com/pmeijer/webgme-react-viz
+
 'use strict';
 process.chdir(__dirname);
 
