@@ -36,3 +36,6 @@ blob-local-storage/
 src/bower_components/
 package-lock.json
 verificationTools/nuXmv
+
+# bundle js files
+*.bundle.js
