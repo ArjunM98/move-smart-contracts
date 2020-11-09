@@ -5,7 +5,7 @@ Tool for the synthesis and verification of Move smart contracts
 
 To run this project locally, first install all dependencies using `npm install`.
 
-Afterwards, build the project using `npm build`.
+Afterwards, build the project using `npm run-script build`.
 
 Lastly, start the application using `npm start` and visit `http://127.0.0.1:8888/`.
 
