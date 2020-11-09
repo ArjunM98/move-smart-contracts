@@ -1,0 +1,8 @@
+[
+  {
+    "id": "WebGMEReactViz",
+    "title": "WebGMEReactViz",
+    "panel": "panels/WebGMEReactViz/WebGMEReactVizPanel",
+    "DEBUG_ONLY": false
+  }
+]
