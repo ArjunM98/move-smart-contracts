@@ -8,7 +8,7 @@ var config = require('webgme/config/config.default'),
 
 // The paths can be loaded from the webgme-setup.json
 config.seedProjects.basePaths.push(__dirname + '/../src/seeds/SC');
-
+config.visualization.decoratorPaths.push(__dirname + '/../src/decorators');
 config.visualization.panelPaths.push(__dirname + '/../src/visualizers/panels');
 
 // Visualizer descriptors
@@ -16,8 +16,6 @@ config.visualization.visualizerDescriptors.push(__dirname + '/../src/visualizers
 
 // Add requirejs paths
 config.requirejsPaths = {
-  'panels': './src/visualizers/panels',
-  'widgets': './src/visualizers/widgets',
   'move-smart-contracts': './src/common'
 };
 
