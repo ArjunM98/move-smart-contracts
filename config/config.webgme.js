@@ -13,6 +13,7 @@ config.seedProjects.defaultProject = 'Move-Seed';
 // Visualization config
 config.visualization.panelPaths.push(__dirname + '/../src/visualizers/panels');
 config.visualization.visualizerDescriptors.push(__dirname + '/../src/visualizers/Visualizers.json');
+config.visualization.decoratorPaths.push(__dirname + '/../src/decorators');
 
 // WebGME Client config
 config.client.pageTitle = 'VeriMove';
@@ -20,8 +21,6 @@ config.client.faviconPath = '/extlib/favicon.ico';
 
 // Add requirejs paths
 config.requirejsPaths = {
-  'panels': './src/visualizers/panels',
-  'widgets': './src/visualizers/widgets',
   'move-smart-contracts': './src/common'
 };
 

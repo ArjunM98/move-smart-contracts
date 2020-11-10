@@ -13,10 +13,16 @@
         "secondary": false,
         "widget": "src/visualizers/widgets/WebGMEReactViz"
       }
+    },
+    "decorators": {
+      "ContractStateDecorator": {
+        "src": "src/decorators/ContractStateDecorator"
+      }
     }
   },
   "dependencies": {
     "seeds": {},
-    "visualizers": {}
+    "visualizers": {},
+    "decorators": {}
   }
 }
