@@ -1,9 +1,7 @@
 {
   "components": {
     "seeds": {
-      "SC": {
-        "src": "src/seeds"
-      }
+      "src": "src/seeds"
     },
     "visualizers": {
       "WebGMEReactViz": {
