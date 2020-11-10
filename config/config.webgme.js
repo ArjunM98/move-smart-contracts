@@ -8,8 +8,7 @@ var config = require('webgme/config/config.default'),
 
 // Seed projects config
 config.seedProjects.basePaths.push(__dirname + '/../src/seeds/SC');
-config.seedProjects.defaultProject = 'SC';
-
+config.seedProjects.defaultProject = 'Move-Seed';
 
 // Visualization config
 config.visualization.panelPaths.push(__dirname + '/../src/visualizers/panels');
@@ -18,7 +17,6 @@ config.visualization.visualizerDescriptors.push(__dirname + '/../src/visualizers
 // WebGME Client config
 config.client.pageTitle = 'VeriMove';
 config.client.faviconPath = '/extlib/favicon.ico';
-
 
 // Add requirejs paths
 config.requirejsPaths = {
