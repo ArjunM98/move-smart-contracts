@@ -4,15 +4,21 @@
 'use strict';
 
 var config = require('webgme/config/config.default'),
-    validateConfig = require('webgme/config/validator');
+  validateConfig = require('webgme/config/validator');
 
-// The paths can be loaded from the webgme-setup.json
+// Seed projects config
 config.seedProjects.basePaths.push(__dirname + '/../src/seeds/SC');
+config.seedProjects.defaultProject = 'SC';
 
+
+// Visualization config
 config.visualization.panelPaths.push(__dirname + '/../src/visualizers/panels');
-
-// Visualizer descriptors
 config.visualization.visualizerDescriptors.push(__dirname + '/../src/visualizers/Visualizers.json');
+
+// WebGME Client config
+config.client.pageTitle = 'VeriMove';
+config.client.faviconPath = '/extlib/favicon.ico';
+
 
 // Add requirejs paths
 config.requirejsPaths = {

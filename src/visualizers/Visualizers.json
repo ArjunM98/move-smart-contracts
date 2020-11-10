@@ -4,5 +4,11 @@
     "title": "WebGMEReactViz",
     "panel": "panels/WebGMEReactViz/WebGMEReactVizPanel",
     "DEBUG_ONLY": false
+  },
+  {
+    "id": "ModelEditor",
+    "title": "Model Editor",
+    "panel": "js/Panels/ModelEditor/ModelEditorPanel",
+    "DEBUG_ONLY": false
   }
 ]
