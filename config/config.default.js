@@ -6,7 +6,6 @@ var config = require('./config.webgme'),
     validateConfig = require('webgme/config/validator');
 
 config.requirejsPaths['scsrc'] = './src';
-config.seedProjects.defaultProject = 'SC';
 config.plugin.allowServerExecution = true;
 config.client.defaultConnectionRouter = 'basic';
 validateConfig(config);

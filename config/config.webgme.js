@@ -7,8 +7,8 @@ var config = require('webgme/config/config.default'),
   validateConfig = require('webgme/config/validator');
 
 // Seed projects config
-config.seedProjects.basePaths.push(__dirname + '/../src/seeds/SC');
-config.seedProjects.defaultProject = 'Move-Seed';
+config.seedProjects.basePaths.push(__dirname + '/../src/seeds');
+config.seedProjects.defaultProject = 'Move-Smart-Contract';
 
 // Visualization config
 config.visualization.panelPaths.push(__dirname + '/../src/visualizers/panels');

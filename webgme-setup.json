@@ -2,7 +2,7 @@
   "components": {
     "seeds": {
       "SC": {
-        "src": "src/seeds/SC"
+        "src": "src/seeds"
       }
     },
     "visualizers": {
