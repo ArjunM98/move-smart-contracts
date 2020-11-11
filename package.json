@@ -5,6 +5,7 @@
   "dependencies": {
     "@material-ui/core": "^1.2.2",
     "@material-ui/icons": "^1.1.0",
+    "@monaco-editor/react": "^3.6.3",
     "immutability-helper": "^2.6.6",
     "prop-types": "^15.6.0",
     "react": "^16.2.0",

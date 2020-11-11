@@ -8,6 +8,8 @@ import {setActiveNode, setActiveSelection, setIsActivePanel, setReadOnly, setPan
 import StatefullSubTree from './containers/StatefullSubTree';
 import NodeList from './components/NodeList';
 
+import Editor from '@monaco-editor/react';
+
 export default class ReactViz extends Component {
     static propTypes = {
         gmeClient: PropTypes.object.isRequired,
@@ -60,9 +62,7 @@ export default class ReactViz extends Component {
 
         if (gmeClient) {
             content = (
-                <StatefullSubTree gmeClient={this.props.gmeClient}>
-                    <NodeList/>
-                </StatefullSubTree>
+                <Editor language="rust" />
             );
         }
 
