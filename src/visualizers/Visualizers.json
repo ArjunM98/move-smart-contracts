@@ -1,7 +1,7 @@
 [
   {
     "id": "MoveCodeEditor",
-    "title": "MoveCodeEditor",
+    "title": "Move Code Editor",
     "panel": "panels/MoveCodeEditor/MoveCodeEditorPanel",
     "DEBUG_ONLY": false
   },

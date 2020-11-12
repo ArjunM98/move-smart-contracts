@@ -34,7 +34,7 @@ define([
         this.client = params.client;
         this.activeNode = null;
 
-        this.appId = `react-viz-id-${guid()}`;
+        this.appId = `${guid()}`;
 
         // initialize UI
         this.initialize();
