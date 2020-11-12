@@ -21,6 +21,8 @@ config.client.faviconPath = '/extlib/favicon.ico';
 
 // Add requirejs paths
 config.requirejsPaths = {
+  'panels': './src/visualizers/panels',	
+  'widgets': './src/visualizers/widgets',
   'move-smart-contracts': './src/common'
 };
 
