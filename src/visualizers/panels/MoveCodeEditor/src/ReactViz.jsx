@@ -1,5 +1,4 @@
-import React, {Component, useRef, useState} from 'react';
-import ReactDOM from "react-dom";
+import React, {Component} from 'react';
 import {Provider} from 'react-redux';
 
 import Editor from '@monaco-editor/react';
@@ -8,8 +7,7 @@ export default class ReactViz extends Component {
   
 
     render() {
-        let content = <div/>;
-        content = (
+        let content = (
             <Editor 
                 language="rust"
                 value={"// write your code here"}
