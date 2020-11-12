@@ -4,5 +4,11 @@
     "title": "MoveCodeEditor",
     "panel": "panels/MoveCodeEditor/MoveCodeEditorPanel",
     "DEBUG_ONLY": false
+  },
+  {
+    "id": "ModelEditor",
+    "title": "Model Editor",
+    "panel": "js/Panels/ModelEditor/ModelEditorPanel",
+    "DEBUG_ONLY": false
   }
 ]
