@@ -1,8 +1,8 @@
 [
   {
-    "id": "WebGMEReactViz",
-    "title": "WebGMEReactViz",
-    "panel": "panels/WebGMEReactViz/WebGMEReactVizPanel",
+    "id": "MoveCodeEditor",
+    "title": "Move Code Editor",
+    "panel": "panels/MoveCodeEditor/MoveCodeEditorPanel",
     "DEBUG_ONLY": false
   },
   {

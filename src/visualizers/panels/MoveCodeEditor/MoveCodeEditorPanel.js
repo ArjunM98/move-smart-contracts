@@ -20,10 +20,10 @@ define([
 
     const WebGMEReactPanels = {};
 
-    function WebGMEReactVizPanel(layoutManager, params) {
+    function MoveCodeEditorPanel(layoutManager, params) {
         const options = {};
         // set properties from options
-        options[PanelBase.OPTIONS.LOGGER_INSTANCE_NAME] = 'WebGMEReactVizPanel';
+        options[PanelBase.OPTIONS.LOGGER_INSTANCE_NAME] = 'MoveCodeEditorPanel';
         options[PanelBase.OPTIONS.FLOATING_TITLE] = true;
 
         // call parent's constructor
@@ -34,7 +34,7 @@ define([
         this.client = params.client;
         this.activeNode = null;
 
-        this.appId = `react-viz-id-${guid()}`;
+        this.appId = `${guid()}`;
 
         // initialize UI
         this.initialize();
@@ -43,10 +43,10 @@ define([
     }
 
     // inherit from PanelBaseWithHeader
-    _.extend(WebGMEReactVizPanel.prototype, PanelBase.prototype);
-    _.extend(WebGMEReactVizPanel.prototype, IActivePanel.prototype);
+    _.extend(MoveCodeEditorPanel.prototype, PanelBase.prototype);
+    _.extend(MoveCodeEditorPanel.prototype, IActivePanel.prototype);
 
-    WebGMEReactVizPanel.prototype.initialize = function initialize() {
+    MoveCodeEditorPanel.prototype.initialize = function initialize() {
         this.$el.prop('id', this.appId);
         this.$el.css({
             width: '100%',
@@ -116,51 +116,51 @@ define([
         };
     };
 
-    WebGMEReactVizPanel.prototype.afterAppend = function afterAppend() {
+    MoveCodeEditorPanel.prototype.afterAppend = function afterAppend() {
         reactViz(this.appId);
     };
 
-    WebGMEReactVizPanel.prototype.onReadOnlyChanged = function onReadOnlyChanged(isReadOnly) {
+    MoveCodeEditorPanel.prototype.onReadOnlyChanged = function onReadOnlyChanged(isReadOnly) {
         // apply parent's onReadOnlyChanged
         PanelBase.prototype.onReadOnlyChanged.call(this, isReadOnly);
         this.stateMediator.onReadOnlyChanged(isReadOnly);
     };
 
-    WebGMEReactVizPanel.prototype.onResize = function onResize(width, height) {
+    MoveCodeEditorPanel.prototype.onResize = function onResize(width, height) {
         this.stateMediator.onResize(width, height);
     };
 
-    WebGMEReactVizPanel.prototype.stateActiveObjectChanged = function stateActiveObjectChanged(model, activeNode) {
+    MoveCodeEditorPanel.prototype.stateActiveObjectChanged = function stateActiveObjectChanged(model, activeNode) {
         if (this.activeNode !== activeNode) {
             this.activeNode = activeNode;
             this.stateMediator.onActiveNodeChange(activeNode);
         }
     };
 
-    WebGMEReactVizPanel.prototype.stateActiveSelectionChanged = function stateActiveSelectionChanged(model, activeSelection) {
+    MoveCodeEditorPanel.prototype.stateActiveSelectionChanged = function stateActiveSelectionChanged(model, activeSelection) {
         this.stateMediator.onActiveSelectionChange(activeSelection);
     };
 
     /* * * * * * * * Visualizer life cycle callbacks * * * * * * * */
-    WebGMEReactVizPanel.prototype.attachClientEventListeners = function attachClientEventListeners() {
+    MoveCodeEditorPanel.prototype.attachClientEventListeners = function attachClientEventListeners() {
         this.detachClientEventListeners();
         WebGMEGlobal.State.on(`change:${CONSTANTS.STATE_ACTIVE_OBJECT}`, this.stateActiveObjectChanged, this);
         WebGMEGlobal.State.on(`change:${CONSTANTS.STATE_ACTIVE_SELECTION}`, this.stateActiveSelectionChanged, this);
     };
 
-    WebGMEReactVizPanel.prototype.detachClientEventListeners = function detachClientEventListeners() {
+    MoveCodeEditorPanel.prototype.detachClientEventListeners = function detachClientEventListeners() {
         WebGMEGlobal.State.off(`change:${CONSTANTS.STATE_ACTIVE_OBJECT}`, this.stateActiveObjectChanged);
         WebGMEGlobal.State.off(`change:${CONSTANTS.STATE_ACTIVE_SELECTION}`, this.stateActiveSelectionChanged);
     };
 
-    WebGMEReactVizPanel.prototype.destroy = function destroy() {
+    MoveCodeEditorPanel.prototype.destroy = function destroy() {
         this.detachClientEventListeners();
         this.stateMediator.onDestroy();
         delete WebGMEReactPanels[this.appId];
         PanelBase.prototype.destroy.call(this);
     };
 
-    WebGMEReactVizPanel.prototype.onActivate = function onActivate() {
+    MoveCodeEditorPanel.prototype.onActivate = function onActivate() {
         this.attachClientEventListeners();
         this.stateMediator.onActivate();
         if (typeof this.activeNode === 'string') {
@@ -171,10 +171,10 @@ define([
         }
     };
 
-    WebGMEReactVizPanel.prototype.onDeactivate = function onDeactivate() {
+    MoveCodeEditorPanel.prototype.onDeactivate = function onDeactivate() {
         this.detachClientEventListeners();
         this.stateMediator.onDeactivate();
     };
 
-    return WebGMEReactVizPanel;
+    return MoveCodeEditorPanel;
 });
