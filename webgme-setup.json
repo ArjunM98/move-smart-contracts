@@ -6,12 +6,12 @@
       }
     },
     "visualizers": {
-      "WebGMEReactViz": {
-        "src": "panels/WebGMEReactViz/WebGMEReactVizPanel",
-        "title": "WebGMEReactViz",
-        "panel": "src/visualizers/panels/WebGMEReactViz",
+      "MoveCodeEditor": {
+        "src": "panels/MoveCodeEditor/MoveCodeEditorPanel",
+        "title": "MoveCodeEditor",
+        "panel": "src/visualizers/panels/MoveCodeEditor",
         "secondary": false,
-        "widget": "src/visualizers/widgets/WebGMEReactViz"
+        "widget": "src/visualizers/widgets/MoveCodeEditor"
       }
     }
   },

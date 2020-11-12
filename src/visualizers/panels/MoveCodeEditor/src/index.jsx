@@ -1,7 +1,7 @@
 /* globals VISUALIZER_INSTANCE_ID, window, document */
 /**
  * This file is specific for the wrapper in webgme. Note how the VISUALIZER_INSTANCE_ID
- * is defined in the wrapper inside webpack.config.js and later passed by the WebGMEReactVizPanel.
+ * is defined in the wrapper inside webpack.config.js and later passed by the MoveCodeEditorPanel.
  */
 
 import React from 'react';

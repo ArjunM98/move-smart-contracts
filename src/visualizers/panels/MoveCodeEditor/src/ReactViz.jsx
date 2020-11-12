@@ -5,8 +5,6 @@ import {createStore} from 'redux';
 
 import reducers from './containers/reducers';
 import {setActiveNode, setActiveSelection, setIsActivePanel, setReadOnly, setPanelSize} from './containers/actions';
-import StatefullSubTree from './containers/StatefullSubTree';
-import NodeList from './components/NodeList';
 
 import Editor from '@monaco-editor/react';
 
