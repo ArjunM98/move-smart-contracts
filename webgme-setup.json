@@ -1,9 +1,7 @@
 {
   "components": {
     "seeds": {
-      "SC": {
-        "src": "src/seeds/SC"
-      }
+      "src": "src/seeds"
     },
     "visualizers": {
       "WebGMEReactViz": {
@@ -13,10 +11,16 @@
         "secondary": false,
         "widget": "src/visualizers/widgets/WebGMEReactViz"
       }
+    },
+    "decorators": {
+      "ContractStateDecorator": {
+        "src": "src/decorators/ContractStateDecorator"
+      }
     }
   },
   "dependencies": {
     "seeds": {},
-    "visualizers": {}
+    "visualizers": {},
+    "decorators": {}
   }
 }
