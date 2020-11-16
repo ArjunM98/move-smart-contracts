@@ -6,12 +6,14 @@
     "@material-ui/core": "^1.2.2",
     "@material-ui/icons": "^1.1.0",
     "@monaco-editor/react": "^3.6.3",
+    "@movei/tree-sitter-move": "^0.2.4",
     "immutability-helper": "^2.6.6",
     "prop-types": "^15.6.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-redux": "^5.0.7",
     "redux": "^3.7.2",
+    "tree-sitter": "^0.17.1",
     "webgme": "^2.24.0"
   },
   "devDependencies": {
