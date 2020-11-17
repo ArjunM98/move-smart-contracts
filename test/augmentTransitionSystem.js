@@ -614,7 +614,36 @@ describe('augmentTransitionSystem', function () {
 
         context('statement type unsupported case', function () {
             it('should throw an error', function () {
-                expect(1).to.equal(1)
+                // Inputs
+                const augmentedStates = ['A', 'B', 'C', 'random_transition'];
+                const augmentedTransitions = [
+                    {
+                        name: 'arandom_transition_guard',
+                        actionName: 'random_transition',
+                        src: 'A',
+                        dst: 'random_transition',
+                        guards: '',
+                        input: '',
+                        output: '',
+                        statements: '',
+                        tags: ''
+                    }
+                ];
+
+                const transition = {
+                    name: 'random_transition',
+                    src: 'A',
+                    dst: 'A',
+                    guards: '',
+                    input: '',
+                    output: '',
+                    statements: 'loop { i = i + 1; };',
+                    tags: ''
+                }
+
+                // Test
+                expect(() => augment.augmentStatement(augmentedStates, augmentedTransitions,
+                    transition['statements'], transition['name'], transition['dst'], transition['dst'], transition['name'])).to.throw();
             })
         })
     })
