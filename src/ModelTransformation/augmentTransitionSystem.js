@@ -5,17 +5,17 @@ define([
     'use strict';
 
     const ExpressionFormats = [
-        'binary_expression', 
-        'assign_expression', 
-        'call_expression', 
-        'break_expression', 
-        'continue_expression', 
-        'move_or_copy_expression', 
+        'binary_expression',
+        'assign_expression',
+        'call_expression',
+        'break_expression',
+        'continue_expression',
+        'move_or_copy_expression',
         'cast_expression',
         'let_statement'
     ]
 
-    var AugmentTransitionSystem = function() {
+    var AugmentTransitionSystem = function () {
         this.parser = new Parser();
         this.parser.setLanguage(MoveGrammer);
     }
@@ -24,7 +24,7 @@ define([
 
     AugmentTransitionSystem.prototype.augmentStatement = function (augmentedStates, augmentedTransitions, statement, src, dst, ret, originalName) {
         var self = this;
-        const tree = parser.parse(statement)
+        const tree = self.parser.parse(statement)
 
         // empty action
         if (tree.rootNode.childCount == 0) {
@@ -67,35 +67,34 @@ define([
                     'statements': statement,
                     'tags': ""
                 });
-            // recurse on the following conditions
+                // recurse on the following conditions
             } else if (statementBody.type == "block") {
-                statementBody = statementBody.child(0);
-                
                 // extract all the children which do not fall under [";", "{", "}"]
                 let nonSyntaxNodesInd = [];
-                for(const ind in statementBody.children) {
-                    if(statementBody.children[ind].constructor.name != "SyntaxNode")
-                        nonSyntaxNodesInd.push(ind);
+
+                for (const ind in statementBody.children) {
+                    if (statementBody.children[ind].constructor.name != "SyntaxNode")
+                        nonSyntaxNodesInd.push(parseInt(ind));
                 }
 
-                if(nonSyntaxNodesInd.length > 1) {
+                if (nonSyntaxNodesInd.length > 1) {
                     // add a state for each action
-                    let state = "s"+augmentedStates.length.toString();
+                    let state = "s" + augmentedStates.length.toString();
                     for (let i = 1; i < nonSyntaxNodesInd.length; i++)
                         augmentedStates.push(state + "_" + i);
                     // augment initial statement
                     AugmentTransitionSystem.prototype.augmentStatement.call(self, augmentedStates, augmentedTransitions,
-                        statementBody[nonSyntaxNodesInd[0]].text, src, state + "_1", ret, originalName);
-                    // augement all states except first and last
+                        statementBody.child(nonSyntaxNodesInd[0]).text + ';', src, state + "_1", ret, originalName);
+                    // augment all states except first and last
                     for (let i = 1; i < nonSyntaxNodesInd.length - 1; i++)
                         AugmentTransitionSystem.prototype.augmentStatement.call(self, augmentedStates, augmentedTransitions,
-                            statementBody[nonSyntaxNodesInd[i]].text, state + "_" + i, state + "_" + (i + 1), ret, originalName);
+                            statementBody.child(nonSyntaxNodesInd[i]).text + ';', state + "_" + i, state + "_" + (i + 1), ret, originalName);
                     // augment finial state 
                     AugmentTransitionSystem.prototype.augmentStatement.call(self, augmentedStates, augmentedTransitions,
-                        statementBody[nonSyntaxNodesInd[nonSyntaxNodesInd.length - 1]].text, state + "_" + (nonSyntaxNodesInd.length - 1), dst, ret, originalName);
-                } else if (nonSyntaxNodesInd == 1) {
+                        statementBody.child(nonSyntaxNodesInd[nonSyntaxNodesInd.length - 1]).text + ';', state + "_" + (nonSyntaxNodesInd.length - 1), dst, ret, originalName);
+                } else if (nonSyntaxNodesInd.length == 1) {
                     AugmentTransitionSystem.prototype.augmentStatement.call(self, augmentedStates, augmentedTransitions,
-                        statementBody[nonSyntaxNodesInd[0]].text, src, dst, ret, originalName);
+                        statementBody.child(nonSyntaxNodesInd[0]).text + ';', src, dst, ret, originalName);
                 } else {
                     augmentedTransitions.push({
                         'name': "a" + augmentedTransitions.length.toString(),
@@ -111,12 +110,15 @@ define([
             } else if (statementBody.type == 'if_expression') {
                 // extract all the children which do not fall under [";", "{", "}"]
                 let nonSyntaxNodesInd = [];
-                for(const ind in statementBody.children) {
-                    if(statementBody.children[ind].constructor.name != "SyntaxNode")
-                        nonSyntaxNodesInd.push(ind);
+
+                for (const ind in statementBody.children) {
+                    if (statementBody.children[ind].constructor.name != "SyntaxNode")
+                        nonSyntaxNodesInd.push(parseInt(ind));
                 }
+
                 // condition is the first child after the syntax nodes
                 const condition = statementBody.child(nonSyntaxNodesInd[0]).text;
+
                 let state = "s" + augmentedStates.length.toString();
                 // true branch
                 augmentedStates.push(state + "_T");
@@ -130,11 +132,13 @@ define([
                     'statements': "",
                     'tags': ""
                 });
+
                 // augment block of if condition
                 AugmentTransitionSystem.prototype.augmentStatement.call(self, augmentedStates, augmentedTransitions,
-                    statementBody.child(nonSyntaxNodesInd[1]).text, state + "_T", dst, ret, originalName);
+                    statementBody.child(nonSyntaxNodesInd[1]).text + ";", state + "_T", dst, ret, originalName);
+
                 // no else/else if branch
-                if (nonSyntaxNodesInd < 3) {
+                if (nonSyntaxNodesInd.length < 3) {
                     augmentedTransitions.push({
                         'name': "a" + augmentedTransitions.length.toString(),
                         'src': src,
@@ -166,9 +170,9 @@ define([
                 let state = "s" + augmentedStates.length.toString();
                 // extract all the children which do not fall under [";", "{", "}"]
                 let nonSyntaxNodesInd = [];
-                for(const ind in statementBody.children) {
-                    if(statementBody.children[ind].constructor.name != "SyntaxNode")
-                        nonSyntaxNodesInd.push(ind);
+                for (const ind in statementBody.children) {
+                    if (statementBody.children[ind].constructor.name != "SyntaxNode")
+                        nonSyntaxNodesInd.push(parseInt(ind));
                 }
                 // condition is the first child after the syntax nodes
                 let condition = statementBody.child(nonSyntaxNodesInd[0]).text;
@@ -195,11 +199,12 @@ define([
                 });
                 AugmentTransitionSystem.prototype.augmentStatement.call(self, augmentedStates, augmentedTransitions,
                     statementBody.child(nonSyntaxNodesInd[1]).text, state + "_L", src, ret, originalName);
-            } 
+            }
             else {
-                console.log(statementBody.child(0).type)
                 throw "Unsupported statement type!";
             }
         }
     }
+
+    return AugmentTransitionSystem;
 });

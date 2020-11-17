@@ -13,6 +13,7 @@
     "react-dom": "^16.2.0",
     "react-redux": "^5.0.7",
     "redux": "^3.7.2",
+    "requirejs": "^2.3.6",
     "tree-sitter": "^0.17.1",
     "webgme": "^2.24.0"
   },
@@ -34,6 +35,7 @@
   "scripts": {
     "start": "node app.js",
     "build": "node ./node_modules/webpack/bin/webpack.js",
-    "webpack": "node ./node_modules/webpack/bin/webpack.js"
+    "webpack": "node ./node_modules/webpack/bin/webpack.js",
+    "test": "mocha"
   }
 }
