@@ -650,7 +650,7 @@ describe('augmentTransitionSystem', function () {
 
     context('#augmentModel', function () {
         it('should return 0', function () {
-            expect(1).to.equal(1)
+            expect(1).to.equal(0)
         })
     })
 })
