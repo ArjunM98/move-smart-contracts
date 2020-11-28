@@ -1,13 +1,45 @@
 # move-smart-contracts
 Tool for the synthesis and verification of Move smart contracts
 
+## Install Dependencies
+
+Install the following: 
+- NodeJS
+- MongoDB
+- Git
+
 ## Local Development
 
-To run this project locally, first install all dependencies using `npm install`.
+1. Clone the repository: 
+``` 
+git clone https://github.com/fcpranav/move-smart-contracts.git
+```
 
-Afterwards, build the project using `npm run-script build`.
+2. Install the necessary packages: 
+```
+cd move-smart-contracts
+npm install
+npm install webgme
+```
 
-Lastly, start the application using `npm start` and visit `http://127.0.0.1:8888/`.
+3. Build React Scripts
+```
+npm run-script build
+```
+
+4. Start the local MongoDB: 
+```
+mkdir sc_data
+mongod --dbpath ./sc_data
+```
+
+5. Start the application: 
+```
+npm start
+```
+
+6. Visit the application on: `http://127.0.0.1:8888/`
+
 
 ## License
 
