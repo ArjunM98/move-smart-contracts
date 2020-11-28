@@ -8,23 +8,21 @@ define([], function () {
     // Generate template that confirms <action> cannot be reached after <action>
     CTLProperties.prototype.generateFirstTemplateProperties = function (bipTransitionsToSMVNames, actionNamesToTransitionNames, properties) {
         var property, clause, propertiesSMV = '';
+        // Essentially: AG(q -> AG (¬p))
+        // p can never happen after q
         for (property of properties){
             propertiesSMV += '-- AG ( '; // "All Globally"
-            // Add second sets of properties first
             for (clause of property[1]) {
                 propertiesSMV += clause + "|"
             }
             propertiesSMV = propertiesSMV.slice(0,-1);
             propertiesSMV += ' -> AG (!(';
-            // Check if second sets of properties are able to be reached to first set
             for (clause of property[0]){
                 propertiesSMV += clause + "|" 
             }
             propertiesSMV = propertiesSMV.slice(0,-1);
             propertiesSMV += ')))\n';
             propertiesSMV += 'CTLSPEC AG ( ';
-            // Add Control specifications of NuSMV
-            // I believe this is where the system will know if a state has been completed or not
             for (clause of property[1]){
                 propertiesSMV += bipTransitionsToSMVNames[actionNamesToTransitionNames[clause]] + "|"
             }
@@ -123,13 +121,15 @@ define([], function () {
     // Generate template that confirms if <action> occurs, <action> happens only after <action>
     CTLProperties.prototype.generateThirdTemplateProperties = function (bipTransitionsToSMVNames, actionNamesToTransitionNames, properties) {
         var property, clause, propertiesSMV = '';
+        // Essentially: AG(p → AX A [¬ q W r])
+        // if p happens, q can happen only after r happens
         for (property of properties){
             propertiesSMV += '-- AG (';
             for (clause of property[0]){
               propertiesSMV += clause + "|"
             }
             propertiesSMV = propertiesSMV.slice(0,-1);
-            propertiesSMV += ') -> AX A [ !(';
+            propertiesSMV += ') -> AX A [ !('; 
             for (clause of property[1]){
                 propertiesSMV += clause + "|"
             }
@@ -198,6 +198,8 @@ define([], function () {
     
     // Generate template that confirms <action> will eventually happen after <action>
     CTLProperties.prototype.generateFourthTemplateProperties = function (bipTransitionsToSMVNames, actionNamesToTransitionNames, properties) {
+        // Essentially: AG (q → AF (p))
+        // p will eventually happen after q
         var property, clause, propertiesSMV = '';
         for (property of properties){
             propertiesSMV += '-- AG ((';
