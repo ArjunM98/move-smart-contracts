@@ -30,13 +30,13 @@ define([
         const augmentedTransitions = [];
 
         // Copy over base states
-        for (let state of model['states']) {
+        for (const state of model['states']) {
             augmentedStates.push(state);
         }
 
         // Process each transition
         // To-Do: Consider adding revert flow once investigating if it is needed
-        for (let transition of model['transitions']) {
+        for (const transition of model['transitions']) {
             // Add state s_guard
             const s_guard = transition['name']
             augmentedStates.push(s_guard);
