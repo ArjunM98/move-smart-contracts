@@ -22,6 +22,58 @@ define([
 
     AugmentTransitionSystem.prototype.constructor = AugmentTransitionSystem;
 
+    // Transforms model to only using variable declarations, expression statements, and return statements
+    // Algorithm 3 from VeriSolid whitepaper
+    AugmentTransitionSystem.prototype.augmentModel = function (model) {
+        var self = this;
+        const augmentedStates = [];
+        const augmentedTransitions = [];
+
+        // Copy over base states
+        for (const state of model['states']) {
+            augmentedStates.push(state);
+        }
+
+        // Process each transition
+        // To-Do: Consider adding revert flow once investigating if it is needed
+        for (const transition of model['transitions']) {
+            // Add state s_guard
+            const s_guard = transition['name']
+            augmentedStates.push(s_guard);
+
+            // Add transition from src state to s_guard with the original transition's guards
+            augmentedTransitions.push({
+                'name': "a" + s_guard + '_guard',
+                'actionName': s_guard,
+                'src': transition['src'],
+                'dst': s_guard,
+                'guards': transition['guards'],
+                'input': transition['input'],
+                'output': transition['output'],
+                'statements': "",
+                'tags': transition['tags']
+            });
+
+            // Wrap the statement in braces because we want augmentStatement to initially treat every statement as a block statement
+            // This is because we want to process compound statements (2 or more statements) as block statements
+            const statement = "{" + transition["statements"] + "}"
+
+            // AugmentStatement for a transition from s_guard to original dst
+            AugmentTransitionSystem.prototype.augmentStatement.call(self, augmentedStates, augmentedTransitions,
+                statement, s_guard, transition['dst'], transition['dst'], s_guard);
+        }
+
+        return {
+            'name': model['name'],
+            'states': augmentedStates,
+            'transitions': augmentedTransitions,
+            'initialState': model['initialState'],
+            'finalStates': model['finalStates']
+        };
+    };
+
+    // Transforms a single transition as states and transitions using only variable declarations, expression statements, and return statements
+    // Algorithm 2 from VeriSolid whitepaper
     AugmentTransitionSystem.prototype.augmentStatement = function (augmentedStates, augmentedTransitions, statement, src, dst, ret, originalName) {
         var self = this;
         const tree = self.parser.parse(statement)
