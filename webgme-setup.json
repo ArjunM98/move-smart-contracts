@@ -16,11 +16,18 @@
       "ContractStateDecorator": {
         "src": "src/decorators/ContractStateDecorator"
       }
+    },
+    "plugins": {
+      "VerifyContract": {
+        "src": "src/plugins/VerifyContract",
+        "test": "test/plugins/VerifyContract"
+      }
     }
   },
   "dependencies": {
     "seeds": {},
     "visualizers": {},
-    "decorators": {}
+    "decorators": {},
+    "plugins": {}
   }
 }
