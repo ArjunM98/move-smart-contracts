@@ -3,8 +3,6 @@
   "version": "0.1.0",
   "private": false,
   "dependencies": {
-    "@material-ui/core": "^4.11.1",
-    "@material-ui/icons": "^4.9.1",
     "@monaco-editor/react": "^3.6.3",
     "@movei/tree-sitter-move": "^0.2.4",
     "immutability-helper": "^2.6.6",
