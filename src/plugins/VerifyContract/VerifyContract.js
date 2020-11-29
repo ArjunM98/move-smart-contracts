@@ -13,14 +13,16 @@ define([
     'plugin/PluginConfig',
     'text!./metadata.json',
     'plugin/PluginBase',
-    'scsrc/ModelTransformation/augmentTransitionSystem.js',
-    'common/util/guid'
+    'scsrc/ModelTransformation/augmentTransitionSystem',
+    'common/util/guid',
+    'ejs'
 ], function (
     PluginConfig,
     pluginMetadata,
     PluginBase,
     AugmentTransitionSystem,
-    guid) {
+    guid,
+    ejs) {
     'use strict';
 
     pluginMetadata = JSON.parse(pluginMetadata);
@@ -148,9 +150,9 @@ define([
         var self = this;
 
         // If current verification tool nuXmv has not been downloaded, process cannot complete
-        if (!fs.existsSync('./verificationTools/nuXmv')) {
-            throw new Error('The NuSMV tool was not added. Please follow the instructions of the README file to add the NuSMV tool.');
-        }
+        //if (!fs.existsSync('./verificationTools/nuXmv')) {
+        //    throw new Error('The NuSMV tool was not added. Please follow the instructions of the README file to add the NuSMV tool.');
+        //}
 
         // Build model structure
         var model = VerifyContract.prototype.buildModel.call(self, nodes, contract);
@@ -204,13 +206,13 @@ define([
             else if (self.isMetaTypeOf(child, self.META.Transition)) {
                 const transition = {
                   'name': childName,
-                  'src': pathToName[core.getPointerPath(child, 'src')],
-                  'dst': pathToName[core.getPointerPath(child, 'dst')],
-                  'guards': core.getAttribute(child, 'guards'),
-                  'input': core.getAttribute(child, 'input'),
-                  'output': core.getAttribute(child, 'output'),
-                  'statements': core.getAttribute(child, 'statements'),
-                  'tags': core.getAttribute(child, 'tags')
+                  'src': pathToName[self.core.getPointerPath(child, 'src')],
+                  'dst': pathToName[self.core.getPointerPath(child, 'dst')],
+                  'guards': self.core.getAttribute(child, 'guards'),
+                  'input': self.core.getAttribute(child, 'input'),
+                  'output': self.core.getAttribute(child, 'output'),
+                  'statements': self.core.getAttribute(child, 'statements'),
+                  'tags': self.core.getAttribute(child, 'tags')
                 };
                 transitions.push(transition);
             }
