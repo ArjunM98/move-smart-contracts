@@ -676,7 +676,7 @@ describe('augmentTransitionSystem', function () {
                     }
                 ],
                 initialState: 'A',
-                finalStates: ['C'],
+                finalStates: ['C']
             };
 
 
