@@ -13,7 +13,7 @@ define([
     'plugin/PluginConfig',
     'text!./metadata.json',
     'plugin/PluginBase',
-    'src/ModelTransformation/conformanceTransformation',
+    'scsrc/ModelTransformation/conformanceTransformation',
     'scsrc/ModelTransformation/augmentTransitionSystem',
     'common/util/guid',
     'ejs'
@@ -157,12 +157,12 @@ define([
 
         // Build model structure
         var model = VerifyContract.prototype.buildModel.call(self, nodes, contract);
+
         // Safely integrate initial action into model interface
         model = conformanceTransformation(model);
 
-        console.log(model);
         // Augment Model 
-        //model = self.AugmentTransitionSystem.augmentModel(model);
+        model = self.AugmentTransitionSystem.augmentModel(model);
 
     }
 
