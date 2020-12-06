@@ -26,7 +26,6 @@ define([
     'use strict';
 
     pluginMetadata = JSON.parse(pluginMetadata);
-    AugmentTransitionSystem = new AugmentTransitionSystem;
 
     /**
      * Initializes a new instance of VerifyContract.
@@ -39,7 +38,7 @@ define([
         // Call base class' constructor.
         PluginBase.call(this);
         this.pluginMetadata = pluginMetadata;
-        this.AugmentTransitionSystem = AugmentTransitionSystem;
+        this.AugmentTransitionSystem = new AugmentTransitionSystem;
     }
 
     /**
@@ -185,7 +184,7 @@ define([
         
         var states = [], 
             transitions = [], 
-            finalStates = []. 
+            finalStates = [],
             initialState; 
 
         // Building model object attributes 
@@ -219,7 +218,7 @@ define([
         }
 
         // Complete model object built from nodes
-        model = {
+        return {
             'name': name,
             'states': states,
             'transitions': transitions,
@@ -228,7 +227,6 @@ define([
             'initialAction': self.core.getAttribute(node, 'initialAction'),
         };
 
-        return model
     }
 
     VerifyContract.prototype.conformance = function (model) {

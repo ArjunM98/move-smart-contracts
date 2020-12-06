@@ -14,6 +14,7 @@ config.visualization.panelPaths.push(__dirname + '/../src/visualizers/panels');
 
 // Visualizer descriptors
 config.visualization.visualizerDescriptors.push(__dirname + '/../src/visualizers/Visualizers.json');
+config.visualization.decoratorPaths.push(__dirname + '/../src/decorators');
 
 // WebGME Client config
 config.client.pageTitle = 'VeriMove';
