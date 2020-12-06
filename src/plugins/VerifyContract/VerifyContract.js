@@ -185,11 +185,11 @@ define([
         var pathToName = {};
         for (const childPath of self.core.getChildrenPaths(node))
             pathToName[childPath] = self.core.getAttribute(nodes[childPath], 'name');
-        
-        var states = [], 
-            transitions = [], 
+
+        var states = [],
+            transitions = [],
             finalStates = [],
-            initialState; 
+            initialState;
 
         // Building model object attributes 
         for (const childPath of self.core.getChildrenPaths(node)) {
@@ -230,7 +230,6 @@ define([
             'finalStates': finalStates,
             'initialAction': self.core.getAttribute(node, 'initialAction'),
         };
-
     }
 
     return VerifyContract;
