@@ -24,8 +24,5 @@ module.exports = {
     'linebreak-style': ['error', 'unix'],
     'no-undef': 'off', // no undefined variable errors with "context"
     'new-cap': 'off' // constructors need to start with capital -> uncessary
-
-    // disable rules from base configurations
-    // 'no-console': 'off'
   }
 }
