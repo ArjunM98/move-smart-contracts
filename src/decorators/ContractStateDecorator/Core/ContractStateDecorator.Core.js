@@ -1,5 +1,3 @@
-/* globals define, $ */
-
 define([
   'text!./svgs/state.svg',
   'text!./svgs/state-highlight.svg'

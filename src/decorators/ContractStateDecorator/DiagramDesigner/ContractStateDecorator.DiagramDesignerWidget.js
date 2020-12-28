@@ -1,5 +1,3 @@
-/* globals define, _, $ */
-
 define([
   'js/Constants',
   'js/NodePropertyNames',
