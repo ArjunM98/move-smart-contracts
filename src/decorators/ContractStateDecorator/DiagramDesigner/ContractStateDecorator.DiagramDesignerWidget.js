@@ -1,5 +1,4 @@
 /* globals define, _, $ */
-/* jshint browser: true, camelcase: false */
 
 define([
   'js/Constants',

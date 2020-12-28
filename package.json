@@ -44,6 +44,6 @@
     "build": "node ./node_modules/webpack/bin/webpack.js",
     "webpack": "node ./node_modules/webpack/bin/webpack.js",
     "test": "mocha",
-    "lint": "eslint . --fix"
+    "lint": "eslint ."
   }
 }

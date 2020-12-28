@@ -1,5 +1,4 @@
 /* globals define, $ */
-/* jshint browser: true */
 
 define([
   'text!./svgs/state.svg',
