@@ -18,7 +18,6 @@ config.visualization.decoratorPaths.push(path.join(__dirname, '/../src/decorator
 
 // WebGME Client config
 config.client.pageTitle = 'VeriMove'
-config.client.faviconPath = '/extlib/favicon.ico'
 
 // Add requirejs paths
 config.requirejsPaths = {
