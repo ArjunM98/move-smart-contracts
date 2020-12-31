@@ -9,8 +9,6 @@ module.exports = {
     'standard'
   ],
   ignorePatterns: [
-    './src/visualizers/panels/MoveCodeEditor/src',
-    './src/visualizers/panels/VerificationProperties/src',
     '/src/visualizers/panels/ReactVisualizerBundles'
   ],
   parserOptions: {
