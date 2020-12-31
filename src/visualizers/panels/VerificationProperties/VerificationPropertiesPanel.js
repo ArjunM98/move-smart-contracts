@@ -9,7 +9,7 @@ define([
   'js/PanelBase/PanelBase',
   'js/PanelManager/IActivePanel',
   'common/util/guid',
-  '../ReactVisualizerBundles/moveCodeEditor.reactViz.bundle',
+  '../ReactVisualizerBundles/verificationProperties.reactViz.bundle',
   'css!./reactViz.bundle.css'
 ], function (CONSTANTS,
   PanelBase,
@@ -20,10 +20,10 @@ define([
 
   const WebGMEReactPanels = {}
 
-  function MoveCodeEditorPanel (layoutManager, params) {
+  function VerificationPropertiesPanel (layoutManager, params) {
     const options = {}
     // set properties from options
-    options[PanelBase.OPTIONS.LOGGER_INSTANCE_NAME] = 'MoveCodeEditorPanel'
+    options[PanelBase.OPTIONS.LOGGER_INSTANCE_NAME] = 'VerificationPropertiesPanel'
     options[PanelBase.OPTIONS.FLOATING_TITLE] = true
 
     // call parent's constructor
@@ -43,10 +43,10 @@ define([
   }
 
   // inherit from PanelBaseWithHeader
-  _.extend(MoveCodeEditorPanel.prototype, PanelBase.prototype)
-  _.extend(MoveCodeEditorPanel.prototype, IActivePanel.prototype)
+  _.extend(VerificationPropertiesPanel.prototype, PanelBase.prototype)
+  _.extend(VerificationPropertiesPanel.prototype, IActivePanel.prototype)
 
-  MoveCodeEditorPanel.prototype.initialize = function initialize () {
+  VerificationPropertiesPanel.prototype.initialize = function initialize () {
     this.$el.prop('id', this.appId)
     this.$el.css({
       width: '100%',
@@ -116,51 +116,51 @@ define([
     }
   }
 
-  MoveCodeEditorPanel.prototype.afterAppend = function afterAppend () {
+  VerificationPropertiesPanel.prototype.afterAppend = function afterAppend () {
     reactViz(this.appId)
   }
 
-  MoveCodeEditorPanel.prototype.onReadOnlyChanged = function onReadOnlyChanged (isReadOnly) {
+  VerificationPropertiesPanel.prototype.onReadOnlyChanged = function onReadOnlyChanged (isReadOnly) {
     // apply parent's onReadOnlyChanged
     PanelBase.prototype.onReadOnlyChanged.call(this, isReadOnly)
     this.stateMediator.onReadOnlyChanged(isReadOnly)
   }
 
-  MoveCodeEditorPanel.prototype.onResize = function onResize (width, height) {
+  VerificationPropertiesPanel.prototype.onResize = function onResize (width, height) {
     this.stateMediator.onResize(width, height)
   }
 
-  MoveCodeEditorPanel.prototype.stateActiveObjectChanged = function stateActiveObjectChanged (model, activeNode) {
+  VerificationPropertiesPanel.prototype.stateActiveObjectChanged = function stateActiveObjectChanged (model, activeNode) {
     if (this.activeNode !== activeNode) {
       this.activeNode = activeNode
       this.stateMediator.onActiveNodeChange(activeNode)
     }
   }
 
-  MoveCodeEditorPanel.prototype.stateActiveSelectionChanged = function stateActiveSelectionChanged (model, activeSelection) {
+  VerificationPropertiesPanel.prototype.stateActiveSelectionChanged = function stateActiveSelectionChanged (model, activeSelection) {
     this.stateMediator.onActiveSelectionChange(activeSelection)
   }
 
   /* * * * * * * * Visualizer life cycle callbacks * * * * * * * */
-  MoveCodeEditorPanel.prototype.attachClientEventListeners = function attachClientEventListeners () {
+  VerificationPropertiesPanel.prototype.attachClientEventListeners = function attachClientEventListeners () {
     this.detachClientEventListeners()
     WebGMEGlobal.State.on(`change:${CONSTANTS.STATE_ACTIVE_OBJECT}`, this.stateActiveObjectChanged, this)
     WebGMEGlobal.State.on(`change:${CONSTANTS.STATE_ACTIVE_SELECTION}`, this.stateActiveSelectionChanged, this)
   }
 
-  MoveCodeEditorPanel.prototype.detachClientEventListeners = function detachClientEventListeners () {
+  VerificationPropertiesPanel.prototype.detachClientEventListeners = function detachClientEventListeners () {
     WebGMEGlobal.State.off(`change:${CONSTANTS.STATE_ACTIVE_OBJECT}`, this.stateActiveObjectChanged)
     WebGMEGlobal.State.off(`change:${CONSTANTS.STATE_ACTIVE_SELECTION}`, this.stateActiveSelectionChanged)
   }
 
-  MoveCodeEditorPanel.prototype.destroy = function destroy () {
+  VerificationPropertiesPanel.prototype.destroy = function destroy () {
     this.detachClientEventListeners()
     this.stateMediator.onDestroy()
     delete WebGMEReactPanels[this.appId]
     PanelBase.prototype.destroy.call(this)
   }
 
-  MoveCodeEditorPanel.prototype.onActivate = function onActivate () {
+  VerificationPropertiesPanel.prototype.onActivate = function onActivate () {
     this.attachClientEventListeners()
     this.stateMediator.onActivate()
     if (typeof this.activeNode === 'string') {
@@ -171,10 +171,10 @@ define([
     }
   }
 
-  MoveCodeEditorPanel.prototype.onDeactivate = function onDeactivate () {
+  VerificationPropertiesPanel.prototype.onDeactivate = function onDeactivate () {
     this.detachClientEventListeners()
     this.stateMediator.onDeactivate()
   }
 
-  return MoveCodeEditorPanel
+  return VerificationPropertiesPanel
 })
