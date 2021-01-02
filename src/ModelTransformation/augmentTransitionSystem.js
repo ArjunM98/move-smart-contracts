@@ -56,7 +56,7 @@ define([
 
       // Wrap the statement in braces because we want augmentStatement to initially treat every statement as a block statement
       // This is because we want to process compound statements (2 or more statements) as block statements
-      const statement = '{' + transition.statements + '}'
+      const statement = '{' + transition.statements + '};'
 
       // AugmentStatement for a transition from s_guard to original dst
       AugmentTransitionSystem.prototype.augmentStatement.call(self, augmentedStates, augmentedTransitions,
