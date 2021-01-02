@@ -15,11 +15,8 @@ define([
     'plugin/PluginBase',
     'scsrc/ModelTransformation/conformanceTransformation',
     'scsrc/ModelTransformation/augmentTransitionSystem',
-<<<<<<< HEAD
     'scsrc/CTLTransformation/CTLProperties',
     'scsrc/BIPTemplates/ejsCache',
-=======
->>>>>>> 022924782922820aa9025ae92bdc82cfefaf1307
     'common/util/guid',
     'ejs'
 ], function (
@@ -28,11 +25,8 @@ define([
     PluginBase,
     conformanceTransformation,
     AugmentTransitionSystem,
-<<<<<<< HEAD
     CTLProperties,
     ejsCache,
-=======
->>>>>>> 022924782922820aa9025ae92bdc82cfefaf1307
     guid,
     ejs) {
     'use strict';
@@ -51,10 +45,7 @@ define([
         PluginBase.call(this);
         this.pluginMetadata = pluginMetadata;
         this.AugmentTransitionSystem = new AugmentTransitionSystem;
-<<<<<<< HEAD
         this.CTLProperties = new CTLProperties;
-=======
->>>>>>> 022924782922820aa9025ae92bdc82cfefaf1307
     }
 
     /**
@@ -165,7 +156,6 @@ define([
         var self = this;
 
         // If current verification tool nuXmv has not been downloaded, process cannot complete
-<<<<<<< HEAD
         if (!fs.existsSync('./verificationTools/nuXmv')) {
             throw new Error('The NuSMV tool was not added. Please follow the instructions of the README file to add the NuSMV tool.');
         }
@@ -382,21 +372,6 @@ define([
             }
         }
         return bipTransitionsToSMVNames
-=======
-        //if (!fs.existsSync('./verificationTools/nuXmv')) {
-        //    throw new Error('The NuSMV tool was not added. Please follow the instructions of the README file to add the NuSMV tool.');
-        //}
-
-        // Build model structure
-        var model = VerifyContract.prototype.buildModel.call(self, nodes, contract);
-
-        // Safely integrate initial action into model interface
-        model = conformanceTransformation(model);
-
-        // Augment Model 
-        model = self.AugmentTransitionSystem.augmentModel(model);
-
->>>>>>> 022924782922820aa9025ae92bdc82cfefaf1307
     }
 
     /**
