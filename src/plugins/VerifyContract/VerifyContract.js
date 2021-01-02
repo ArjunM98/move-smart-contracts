@@ -105,6 +105,7 @@ define([
             self.result.setSuccess(true);
             callback(null, self.result)
         }).catch(function (err) {
+            self.logger.error(err);
             self.logger.error(err.stack);
             callback(err, self.result);
         })
@@ -226,8 +227,6 @@ define([
             self.sendNotification('NuSMV to BIP counterexamples translation successful.');
 
         }
-
-        console.log("complete!");
     }
 
 
@@ -236,8 +235,6 @@ define([
         var self = this,
             actionNamesToTransitionNames = {},
             bipTransitionsToSMVNames = {};
-
-        console.log(model);
 
         actionNamesToTransitionNames = VerifyContract.prototype.actionNamesToTransitions.call(self, model['transitions'], actionNamesToTransitionNames);
         bipTransitionsToSMVNames = VerifyContract.prototype.BIPTransitionSMVNames.call(self, fs, path, model);

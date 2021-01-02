@@ -1,5 +1,5 @@
 define([
-    'common/util/ejs',
+    'ejs',
     'text!./contractBIPStart.ejs',
     'text!./contractBIPEnd.ejs',
     'text!./BIPPorts.ejs',
