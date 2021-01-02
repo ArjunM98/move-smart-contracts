@@ -675,9 +675,11 @@ describe('augmentTransitionSystem', function () {
                         tags: ''
                     }
                 ],
-                initialState: ['A'],
+                initialState: 'A',
                 finalStates: ['C']
             };
+
+
 
             // Expect two additional statements to be created, one for each transition
             // Since all statements are "basic", we expect four transitions to be created
@@ -730,7 +732,7 @@ describe('augmentTransitionSystem', function () {
                         tags: ''
                     },
                 ],
-                initialState: ['A'],
+                initialState: 'A',
                 finalStates: ['C']
             };
 

@@ -13,6 +13,7 @@ define([
     'plugin/PluginConfig',
     'text!./metadata.json',
     'plugin/PluginBase',
+    'scsrc/ModelTransformation/conformanceTransformation',
     'scsrc/ModelTransformation/augmentTransitionSystem',
     'common/util/guid',
     'ejs'
@@ -20,6 +21,7 @@ define([
     PluginConfig,
     pluginMetadata,
     PluginBase,
+    conformanceTransformation,
     AugmentTransitionSystem,
     guid,
     ejs) {
@@ -63,10 +65,10 @@ define([
      */
     VerifyContract.prototype.main = function (callback) {
         // Use this to access core, project, result, logger etc from PluginBase.
-        var self = this, 
+        var self = this,
             path,
             fs,
-            filesToAdd = {}, 
+            filesToAdd = {},
             artifact;
 
         if (typeof window == 'undefined') {
@@ -84,25 +86,25 @@ define([
         }
 
         // Loads all the nodes in the subtree starting from node and returns a map from paths to nodes.
-        self.loadNodeMap(self.activeNode).then(function(nodes) {
-                return VerifyContract.getVerificationResults(self, nodes, fs, path)
-            }).then(function() {
-                // writes verification output to the blob storage used (monogdb)
-                filesToAdd['output.txt'] = fs.readFileSync(path+'/output.txt_translated.txt', 'utf8');
-                artifact = self.blobClient.createArtifact('VerificationOutput');
-                return artifact.addFiles(filesToAdd);
-            }).then(function (fileHash) {
-                self.result.addArtifact(fileHash);
-                return artifact.save();
-            }).then(function() {
-                self.result.setSuccess(true);
-                callback(null, self.result)
-            }).catch(function(err) {
-                self.logger.error(err.stack);
-                callback(err, self.result);
-            })
+        self.loadNodeMap(self.activeNode).then(function (nodes) {
+            return VerifyContract.getVerificationResults(self, nodes, fs, path)
+        }).then(function () {
+            // writes verification output to the blob storage used (monogdb)
+            filesToAdd['output.txt'] = fs.readFileSync(path + '/output.txt_translated.txt', 'utf8');
+            artifact = self.blobClient.createArtifact('VerificationOutput');
+            return artifact.addFiles(filesToAdd);
+        }).then(function (fileHash) {
+            self.result.addArtifact(fileHash);
+            return artifact.save();
+        }).then(function () {
+            self.result.setSuccess(true);
+            callback(null, self.result)
+        }).catch(function (err) {
+            self.logger.error(err.stack);
+            callback(err, self.result);
+        })
     };
-    
+
     /**
      * Verification function which invokes verify on each set of contracts
      * @param self - Reference to self object
@@ -113,8 +115,8 @@ define([
     VerifyContract.getVerificationResults = function (self, nodes, fs, path) {
         var contract;
         // for multiple contracts, verify each one
-        for (contract of VerifyContract.prototype.getContractPaths.call(self, nodes)) 
-          VerifyContract.prototype.verifyContract.call(self, nodes, contract, fs, path);
+        for (contract of VerifyContract.prototype.getContractPaths.call(self, nodes))
+            VerifyContract.prototype.verifyContract.call(self, nodes, contract, fs, path);
     };
 
     /**
@@ -123,11 +125,11 @@ define([
      */
     VerifyContract.prototype.getContractPaths = function (nodes) {
         var self = this,
-                path,
-                node,
-                //Using an array for the multiple contracts extention
-                contracts = [];
-    
+            path,
+            node,
+            //Using an array for the multiple contracts extention
+            contracts = [];
+
         for (path in nodes) {
             node = nodes[path];
             if (self.isMetaTypeOf(node, self.META.Contract)) {
@@ -155,8 +157,10 @@ define([
 
         // Build model structure
         var model = VerifyContract.prototype.buildModel.call(self, nodes, contract);
+
         // Safely integrate initial action into model interface
-        model = VerifyContract.prototype.conformance.call(self, model);
+        model = conformanceTransformation(model);
+
         // Augment Model 
         model = self.AugmentTransitionSystem.augmentModel(model);
 
@@ -169,10 +173,10 @@ define([
      * @param nodes - Current node structure of modelling elements in project tree
      * @param contract - path to current contract node 
      */
-    VerifyContract.prototype.buildModel = function(nodes, contract) {
+    VerifyContract.prototype.buildModel = function (nodes, contract) {
 
         var self = this;
-        
+
         // extract contract specific nodes
         var node = nodes[contract];
         var name = self.core.getAttribute(node, 'name');
@@ -181,17 +185,17 @@ define([
         var pathToName = {};
         for (const childPath of self.core.getChildrenPaths(node))
             pathToName[childPath] = self.core.getAttribute(nodes[childPath], 'name');
-        
-        var states = [], 
-            transitions = [], 
+
+        var states = [],
+            transitions = [],
             finalStates = [],
-            initialState; 
+            initialState;
 
         // Building model object attributes 
         for (const childPath of self.core.getChildrenPaths(node)) {
             var child = nodes[childPath];
             var childName = self.core.getAttribute(child, 'name');
-            
+
             if (self.isMetaTypeOf(child, self.META.State))
                 states.push(childName);
             else if (self.isMetaTypeOf(child, self.META.InitialState)) {
@@ -204,14 +208,14 @@ define([
             }
             else if (self.isMetaTypeOf(child, self.META.Transition)) {
                 const transition = {
-                  'name': childName,
-                  'src': pathToName[self.core.getPointerPath(child, 'src')],
-                  'dst': pathToName[self.core.getPointerPath(child, 'dst')],
-                  'guards': self.core.getAttribute(child, 'guards'),
-                  'input': self.core.getAttribute(child, 'input'),
-                  'output': self.core.getAttribute(child, 'output'),
-                  'statements': self.core.getAttribute(child, 'statements'),
-                  'tags': self.core.getAttribute(child, 'tags')
+                    'name': childName,
+                    'src': pathToName[self.core.getPointerPath(child, 'src')],
+                    'dst': pathToName[self.core.getPointerPath(child, 'dst')],
+                    'guards': self.core.getAttribute(child, 'guards'),
+                    'input': self.core.getAttribute(child, 'input'),
+                    'output': self.core.getAttribute(child, 'output'),
+                    'statements': self.core.getAttribute(child, 'statements'),
+                    'tags': self.core.getAttribute(child, 'tags')
                 };
                 transitions.push(transition);
             }
@@ -226,45 +230,7 @@ define([
             'finalStates': finalStates,
             'initialAction': self.core.getAttribute(node, 'initialAction'),
         };
-
     }
-
-    VerifyContract.prototype.conformance = function (model) {
-
-        // TODO: Investigate fall back state implementation
-
-        var states = [];
-        for (const state of model['states'])
-          states.push(state);
-    
-        var transitions = [],
-            initialState = model['initialState'];
-        for (const transition of model['transitions'])
-          transitions.push(transition);
-    
-        if (model['initialAction'].trim().length != 0) {
-          states.push("pre_constructor");
-          initialState = "pre_constructor";
-          transitions.push({
-            'name': model['name'],
-            'src': "pre_constructor",
-            'dst': model['initialState'],
-            'guards': "",
-            'input': "",
-            'output': "",
-            'statements': model['initialAction'],
-            'tags': ""
-          });
-        }
-    
-        return {
-          'name': model['name'],
-          'states': states,
-          'transitions': transitions,
-          'initialState': initialState,
-          'finalStates': model['finalStates']
-        };
-      }
 
     return VerifyContract;
 });
