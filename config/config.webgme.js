@@ -6,6 +6,7 @@ const path = require('path')
 const config = require('webgme/config/config.default')
 const validateConfig = require('webgme/config/validator')
 
+<<<<<<< HEAD
 // Seed projects config
 config.plugin.basePaths.push(__dirname + '/../src/plugins');
 config.seedProjects.basePaths.push(path.join(__dirname, '/../src/seeds'))
@@ -15,14 +16,31 @@ config.seedProjects.defaultProject = 'Move-Smart-Contract'
 config.visualization.panelPaths.push(path.join(__dirname, '/../src/visualizers/panels'))
 config.visualization.visualizerDescriptors.push(path.join(__dirname, '/../src/visualizers/Visualizers.json'))
 config.visualization.decoratorPaths.push(path.join(__dirname, '/../src/decorators'))
+=======
+// The paths can be loaded from the webgme-setup.json
+config.plugin.basePaths.push(__dirname + '/../src/plugins');
+config.seedProjects.basePaths.push(__dirname + '/../src/seeds');
+config.seedProjects.defaultProject = 'Move-Smart-Contract';
+
+config.visualization.panelPaths.push(__dirname + '/../src/visualizers/panels');
+
+// Visualizer descriptors
+config.visualization.visualizerDescriptors.push(__dirname + '/../src/visualizers/Visualizers.json');
+config.visualization.decoratorPaths.push(__dirname + '/../src/decorators');
+>>>>>>> 022924782922820aa9025ae92bdc82cfefaf1307
 
 // WebGME Client config
 config.client.pageTitle = 'VeriMove'
 
 // Add requirejs paths
 config.requirejsPaths = {
+<<<<<<< HEAD
   panels: './src/visualizers/panels',
   widgets: './src/visualizers/widgets',
+=======
+  'panels': './src/visualizers/panels',
+  'widgets': './src/visualizers/widgets',
+>>>>>>> 022924782922820aa9025ae92bdc82cfefaf1307
   'move-smart-contracts': './src/common'
 }
 
