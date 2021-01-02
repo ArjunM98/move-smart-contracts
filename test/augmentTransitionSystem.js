@@ -71,96 +71,94 @@ describe('augmentTransitionSystem', function () {
     })
 
     context('#augmentModel', function () {
-        it('should properly augment a model', function () {
-            const inputModel = {
-                name: 'My Model',
-                states: ['A', 'B', 'C'],
-                transitions: [
-                    {
-                        name: 'a_to_b',
-                        src: 'A',
-                        dst: 'B',
-                        guards: 'canTransition == true',
-                        input: '',
-                        output: '',
-                        statements: 'step = step + 1',
-                        tags: ''
-                    },
-                    {
-                        name: 'b_to_c',
-                        src: 'B',
-                        dst: 'C',
-                        guards: 'cannotTransition == false',
-                        input: '',
-                        output: '',
-                        statements: 'step = step + 1',
-                        tags: ''
-                    }
-                ],
-                initialState: 'A',
-                finalStates: ['C']
-            };
+      it('should properly augment a model', function () {
+        const inputModel = {
+          name: 'My Model',
+          states: ['A', 'B', 'C'],
+          transitions: [
+            {
+              name: 'a_to_b',
+              src: 'A',
+              dst: 'B',
+              guards: 'canTransition == true',
+              input: '',
+              output: '',
+              statements: 'step = step + 1',
+              tags: ''
+            },
+            {
+              name: 'b_to_c',
+              src: 'B',
+              dst: 'C',
+              guards: 'cannotTransition == false',
+              input: '',
+              output: '',
+              statements: 'step = step + 1',
+              tags: ''
+            }
+          ],
+          initialState: 'A',
+          finalStates: ['C']
+        }
 
+        // Expect two additional statements to be created, one for each transition
+        // Since all statements are "basic", we expect four transitions to be created
+        const expectedAugmentedModel = {
+          name: 'My Model',
+          states: ['A', 'B', 'C', 'a_to_b', 'b_to_c'],
+          transitions: [
+            {
+              name: 'aa_to_b_guard',
+              actionName: 'a_to_b',
+              src: 'A',
+              dst: 'a_to_b',
+              guards: 'canTransition == true',
+              input: '',
+              output: '',
+              statements: '',
+              tags: ''
+            },
+            {
+              name: 'a1',
+              actionName: 'a_to_b.step = step + 1;',
+              src: 'a_to_b',
+              dst: 'B',
+              guards: '',
+              input: '',
+              output: '',
+              statements: 'step = step + 1;',
+              tags: ''
+            },
+            {
+              name: 'ab_to_c_guard',
+              actionName: 'b_to_c',
+              src: 'B',
+              dst: 'b_to_c',
+              guards: 'cannotTransition == false',
+              input: '',
+              output: '',
+              statements: '',
+              tags: ''
+            },
+            {
+              name: 'a3',
+              actionName: 'b_to_c.step = step + 1;',
+              src: 'b_to_c',
+              dst: 'C',
+              guards: '',
+              input: '',
+              output: '',
+              statements: 'step = step + 1;',
+              tags: ''
+            }
+          ],
+          initialState: 'A',
+          finalStates: ['C']
+        }
 
-
-            // Expect two additional statements to be created, one for each transition
-            // Since all statements are "basic", we expect four transitions to be created
-            const expectedAugmentedModel = {
-                name: 'My Model',
-                states: ['A', 'B', 'C', 'a_to_b', 'b_to_c'],
-                transitions: [
-                    {
-                        name: 'aa_to_b_guard',
-                        actionName: 'a_to_b',
-                        src: 'A',
-                        dst: 'a_to_b',
-                        guards: 'canTransition == true',
-                        input: '',
-                        output: '',
-                        statements: '',
-                        tags: ''
-                    },
-                    {
-                        name: 'a1',
-                        actionName: 'a_to_b.step = step + 1;',
-                        src: 'a_to_b',
-                        dst: 'B',
-                        guards: '',
-                        input: '',
-                        output: '',
-                        statements: 'step = step + 1;',
-                        tags: ''
-                    },
-                    {
-                        name: 'ab_to_c_guard',
-                        actionName: 'b_to_c',
-                        src: 'B',
-                        dst: 'b_to_c',
-                        guards: 'cannotTransition == false',
-                        input: '',
-                        output: '',
-                        statements: '',
-                        tags: ''
-                    },
-                    {
-                        name: 'a3',
-                        actionName: 'b_to_c.step = step + 1;',
-                        src: 'b_to_c',
-                        dst: 'C',
-                        guards: '',
-                        input: '',
-                        output: '',
-                        statements: 'step = step + 1;',
-                        tags: ''
-                    },
-                ],
-                initialState: 'A',
-                finalStates: ['C']
-            };
-
-            const resultModel = augment.augmentModel(inputModel);
-            expect(resultModel).to.eql(expectedAugmentedModel);
-        })
+        const resultModel = augment.augmentModel(inputModel)
+        expect(resultModel).to.eql(expectedAugmentedModel)
+      })
     })
 
     context('compound expression case', function () {

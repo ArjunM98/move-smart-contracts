@@ -7,7 +7,7 @@ const config = require('webgme/config/config.default')
 const validateConfig = require('webgme/config/validator')
 
 // Seed projects config
-config.plugin.basePaths.push(__dirname + '/../src/plugins');
+config.plugin.basePaths.push(path.join(__dirname, '/../src/plugins'))
 config.seedProjects.basePaths.push(path.join(__dirname, '/../src/seeds'))
 config.seedProjects.defaultProject = 'Move-Smart-Contract'
 
