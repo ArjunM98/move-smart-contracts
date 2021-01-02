@@ -15,6 +15,8 @@ define([
     'plugin/PluginBase',
     'scsrc/ModelTransformation/conformanceTransformation',
     'scsrc/ModelTransformation/augmentTransitionSystem',
+    'scsrc/CTLTransformation/CTLProperties',
+    'scsrc/BIPTemplates/ejsCache',
     'common/util/guid',
     'ejs'
 ], function (
@@ -23,6 +25,8 @@ define([
     PluginBase,
     conformanceTransformation,
     AugmentTransitionSystem,
+    CTLProperties,
+    ejsCache,
     guid,
     ejs) {
     'use strict';
@@ -41,6 +45,7 @@ define([
         PluginBase.call(this);
         this.pluginMetadata = pluginMetadata;
         this.AugmentTransitionSystem = new AugmentTransitionSystem;
+        this.CTLProperties = new CTLProperties;
     }
 
     /**
@@ -151,19 +156,222 @@ define([
         var self = this;
 
         // If current verification tool nuXmv has not been downloaded, process cannot complete
-        //if (!fs.existsSync('./verificationTools/nuXmv')) {
-        //    throw new Error('The NuSMV tool was not added. Please follow the instructions of the README file to add the NuSMV tool.');
-        //}
+        if (!fs.existsSync('./verificationTools/nuXmv')) {
+            throw new Error('The NuSMV tool was not added. Please follow the instructions of the README file to add the NuSMV tool.');
+        }
 
         // Build model structure
         var model = VerifyContract.prototype.buildModel.call(self, nodes, contract);
-
         // Safely integrate initial action into model interface
         model = conformanceTransformation(model);
-
         // Augment Model 
         model = self.AugmentTransitionSystem.augmentModel(model);
+        // BIP model transformation
+        var bipModel = ejs.render(ejsCache.contractType.complete, model);
 
+        var execSync = require('child_process').execSync;
+        var child,
+            currentConfig = this.getCurrentConfig();
+        if (fs && path) {
+            try {
+                fs.statSync(path);
+            } catch (err) {
+                if (err.code === 'ENOENT') {
+                    fs.mkdirSync(path);
+                }
+            }
+
+            // Generating NuSMV format form BIP
+            fs.writeFileSync(path + '/' + model.name + '.bip', bipModel, 'utf8');
+            var runbip2smv = 'java -jar ' + process.cwd() + '/verificationTools/bip-to-nusmv.jar ' + path + '/' + model.name + '.bip ' + path + '/' + model.name + '.smv';
+
+            fs.writeFileSync(path + '/runbip2smv.sh', runbip2smv, 'utf8');
+            self.sendNotification('Starting the BIP to NuSMV translation..');
+            try {
+                child = execSync('/bin/bash ' + path + '/runbip2smv.sh');
+            } catch (e) {
+                self.logger.error('stderr ' + e.stderr);
+                throw e;
+            }
+            self.sendNotification('BIP to NuSMV translation successful.');
+
+            // Generate CTL properties
+            VerifyContract.prototype.generateProperties.call(self, fs, path, model, currentConfig);
+
+            //  Run NuSMV Verification
+            var runNusmv = '';
+            runNusmv = '.' + '/verificationTools/nuXmv -r ' + path + '/' + model.name + '.smv >> ' + path + '/output.txt';
+            
+            fs.writeFileSync(path + '/runNusmv.sh', runNusmv, 'utf8');
+            self.sendNotification('Starting the NuSMV verification..');
+            try {
+                child = execSync('/bin/bash ' + path + '/runNusmv.sh');
+            } catch (e) {
+                self.logger.error('stderr ' + e.stderr);
+                throw e;
+            }
+            self.sendNotification('NuSMV verification successful.');
+            
+            // Generate counter examples
+            var runsmv2bip = 'java -jar ' + process.cwd() + '/verificationTools/smv2bip.jar ' + path + '/' + model.name + '.smv ' + path + '/output.txt ' + path + '/' + model.name + 'Prop.txt';
+
+            fs.writeFileSync(path + '/runsmv2bip.sh', runsmv2bip, 'utf8');
+            self.sendNotification('Starting the NuSMV to BIP counterexamples translation..');
+            try {
+                child = execSync('/bin/bash ' + path + '/runsmv2bip.sh');
+            } catch (e) {
+                self.logger.error('stderr ' + e.stderr);
+                throw e;
+            }
+            self.sendNotification('NuSMV to BIP counterexamples translation successful.');
+
+        }
+
+        console.log("complete!");
+    }
+
+
+    VerifyContract.prototype.generateProperties = function (fs, path, model, currentConfig) {
+
+        var self = this,
+            actionNamesToTransitionNames = {},
+            bipTransitionsToSMVNames = {};
+
+        console.log(model);
+
+        actionNamesToTransitionNames = VerifyContract.prototype.actionNamesToTransitions.call(self, model['transitions'], actionNamesToTransitionNames);
+        bipTransitionsToSMVNames = VerifyContract.prototype.BIPTransitionSMVNames.call(self, fs, path, model);
+
+        var fairnessProperties = '';
+        if (currentConfig['templateTwo'] != '' || currentConfig['templateThree'] != '') {
+            fairnessProperties = 'FAIRNESS ( ';
+        }
+        var propertiesSMV = '',
+            propertiesTxt = '',
+            properties = [];
+        if (currentConfig['templateOne'] != '') {
+            properties = VerifyContract.prototype.parseProperties.call(self, model, currentConfig['templateOne']);
+            propertiesSMV += self.CTLProperties.generateFirstTemplateProperties(bipTransitionsToSMVNames, actionNamesToTransitionNames, properties);
+            propertiesTxt += self.CTLProperties.generateFirstTemplatePropertiesTxt(properties);
+        }
+        if (currentConfig['templateTwo'] != '') {
+            properties = VerifyContract.prototype.parseProperties.call(self, model, currentConfig['templateTwo']);
+            propertiesSMV += self.CTLProperties.generateSecondTemplateProperties(bipTransitionsToSMVNames, actionNamesToTransitionNames, properties);
+            fairnessProperties += self.CTLProperties.generateSecondTemplateFairnessProperties(bipTransitionsToSMVNames, actionNamesToTransitionNames, properties);
+            propertiesTxt += self.CTLProperties.generateSecondTemplatePropertiesTxt(properties);
+        }
+        if (currentConfig['templateThree'] != '') {
+            properties = VerifyContract.prototype.parseProperties.call(self, model, currentConfig['templateThree']);
+            propertiesSMV += self.CTLProperties.generateThirdTemplateProperties(bipTransitionsToSMVNames, actionNamesToTransitionNames, properties);
+            fairnessProperties += self.CTLProperties.generateThirdTemplateFairnessProperties(bipTransitionsToSMVNames, actionNamesToTransitionNames, properties);
+            propertiesTxt += self.CTLProperties.generateThirdTemplatePropertiesTxt(properties);
+        }
+        if (currentConfig['templateFour'] != '') {
+            properties = VerifyContract.prototype.parseProperties.call(self, model, currentConfig['templateFour']);
+            propertiesSMV += self.CTLProperties.generateFourthTemplateProperties(bipTransitionsToSMVNames, actionNamesToTransitionNames, properties);
+            propertiesTxt += self.CTLProperties.generateFourthTemplatePropertiesTxt(properties);
+        }
+        if (currentConfig['templateTwo'] != '' || currentConfig['templateThree'] != '') {
+            fairnessProperties = fairnessProperties.slice(0, -1);
+            fairnessProperties += ');';
+        }
+        fs.appendFileSync(path + '/' + model.name + '.smv', propertiesSMV);
+        fs.appendFileSync(path + '/' + model.name + '.smv', fairnessProperties);
+        fs.writeFileSync(path + '/' + model.name + 'Prop.txt', propertiesTxt);
+    }
+
+    /**
+     * 
+     * Helper function to parse user specified properties
+     * 
+     * @param model - Model object
+     * @param properties - config properties
+     */
+    VerifyContract.prototype.parseProperties = function (model, properties) {
+        var self = this,
+            parsedProperties, clauses, actions,
+            property, clause, action, actionName,
+            transitions, transition;
+        parsedProperties = [];
+        for (property of properties.split(";")) {
+            clauses = []; // collect all clauses for this property
+            for (clause of property.split("#")) {
+                actions = []; // collect all actions for this clause
+                for (action of clause.split("|")) {
+                    actionName = action.replace(/\s/g, ""); // all comparisons will be whitespace-agnostic
+                    transitions = [];
+                    for (transition of model["transitions"]) { // for each transition, check if it matches the action specification
+                        if (transition['actionName'] != undefined && transition['actionName'].replace(/[;\s]+/g, "") === actionName) {
+                            transitions.push(transition['actionName']);
+                        }
+                    }
+                    if (transitions.length != 1) { // action specification is ambiguous since multiple transitions match it
+                        if (transitions.length == 0) {
+                            throw "Could not find action: " + action + " Possible reason: Statement was specified without function name.";
+                        }
+                        throw "Ambiguous action (multiple instances occured): " + action;
+                    }
+                    actions.push(transitions[0]); // single transition matches the action specification
+                }
+                clauses.push(actions); // push this clause
+            }
+            parsedProperties.push(clauses); // push this property
+        }
+        return parsedProperties;
+    }
+
+    /**
+     * 
+     * Helper function to generate mappings from action names to regular names
+     * 
+     * @param transitions - Object array of all transitions
+     * @param actionNamesToTransitionNames - Populate with a map of actionNames to names
+     */
+    VerifyContract.prototype.actionNamesToTransitions = function (transitions, actionNamesToTransitionNames) {
+        var self = this;
+
+        for (const transition of transitions) {
+            if (transition['actionName'] != undefined) {
+                actionNamesToTransitionNames[transition['actionName']] = transition['name'];
+            }
+        }
+        return actionNamesToTransitionNames;
+    };
+
+    /**
+     * 
+     * Helper function to generate mappings from NuSMV names to BIP names
+     * 
+     * @param fs - file system import
+     * @param path - project path for where files are stored
+     * @param model - object describing contract structure
+     */
+    VerifyContract.prototype.BIPTransitionSMVNames = function (fs, path, model) {
+
+        var self = this,
+            inINVAR = false,
+            inModuleMain = false,
+            bipTransitionsToSMVNames = {};
+
+        // Building mapping of BIP names to NuSMV name
+        for (var line of fs.readFileSync(path + '/' + model.name + '.smv', 'utf-8').split("\n")) {
+            if (line.includes("INVAR") && inModuleMain) {
+                inINVAR = true;
+            }
+            else if (line.includes("MODULE main")) {
+                inModuleMain = true;
+            }
+            // Find main module where NuSMV names are defined
+            // Index into pre-defined format of: 
+            // ( (( (NuInteraction) = (NuI15) )) -> (BAUC_a14) )
+            else if (inModuleMain && inINVAR) {
+                if (line.includes("Nu")) {
+                    var fields = line.split(/\(|\)/);
+                    bipTransitionsToSMVNames[fields[10].substring(5)] = "(NuInteraction) = (" + fields[6] + ")";
+                }
+            }
+        }
+        return bipTransitionsToSMVNames
     }
 
     /**

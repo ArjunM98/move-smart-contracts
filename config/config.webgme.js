@@ -11,18 +11,10 @@ config.plugin.basePaths.push(__dirname + '/../src/plugins');
 config.seedProjects.basePaths.push(path.join(__dirname, '/../src/seeds'))
 config.seedProjects.defaultProject = 'Move-Smart-Contract'
 
-<<<<<<< HEAD
 // Visualization config
 config.visualization.panelPaths.push(path.join(__dirname, '/../src/visualizers/panels'))
 config.visualization.visualizerDescriptors.push(path.join(__dirname, '/../src/visualizers/Visualizers.json'))
 config.visualization.decoratorPaths.push(path.join(__dirname, '/../src/decorators'))
-=======
-config.visualization.panelPaths.push(__dirname + '/../src/visualizers/panels');
-
-// Visualizer descriptors
-config.visualization.visualizerDescriptors.push(__dirname + '/../src/visualizers/Visualizers.json');
-config.visualization.decoratorPaths.push(__dirname + '/../src/decorators');
->>>>>>> 74aae88... fixed buildModel bugs
 
 // WebGME Client config
 config.client.pageTitle = 'VeriMove'
