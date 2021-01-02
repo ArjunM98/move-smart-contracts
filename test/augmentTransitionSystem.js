@@ -70,71 +70,6 @@ describe('augmentTransitionSystem', function () {
       })
     })
 
-<<<<<<< HEAD
-    context('return expression case', function () {
-      it('should properly augment states and transitions', function () {
-        // Inputs
-        const augmentedStates = ['A', 'B', 'C', 'random_transition']
-        const augmentedTransitions = [
-          {
-            name: 'arandom_transition_guard',
-            actionName: 'random_transition',
-            src: 'A',
-            dst: 'random_transition',
-            guards: '',
-            input: '',
-            output: '',
-            statements: '',
-            tags: ''
-          }
-        ]
-
-        const transition = {
-          name: 'random_transition',
-          src: 'A',
-          dst: 'A',
-          guards: '',
-          input: '',
-          output: '',
-          statements: 'return b;',
-          tags: ''
-        }
-
-        // Outputs
-        const expectedAugmentedStates = ['A', 'B', 'C', 'random_transition']
-        const expectedAugmentedTransitions = [
-          {
-            name: 'arandom_transition_guard',
-            actionName: 'random_transition',
-            src: 'A',
-            dst: 'random_transition',
-            guards: '',
-            input: '',
-            output: '',
-            statements: '',
-            tags: ''
-          },
-          {
-            name: 'a1',
-            actionName: 'random_transition.return b;',
-            src: 'random_transition',
-            dst: 'A',
-            guards: '',
-            input: '',
-            output: '',
-            statements: 'return b;',
-            tags: ''
-          }
-        ]
-
-        // Test
-        augment.augmentStatement(augmentedStates, augmentedTransitions,
-          transition.statements, transition.name, transition.dst, transition.dst, transition.name)
-
-        expect(augmentedStates).to.eql(expectedAugmentedStates)
-        expect(augmentedTransitions).to.eql(expectedAugmentedTransitions)
-      })
-=======
     context('#augmentModel', function () {
         it('should properly augment a model', function () {
             const inputModel = {
@@ -226,7 +161,6 @@ describe('augmentTransitionSystem', function () {
             const resultModel = augment.augmentModel(inputModel);
             expect(resultModel).to.eql(expectedAugmentedModel);
         })
->>>>>>> 0229247... Refactor Conformance into its own file, add tests (#32)
     })
 
     context('compound expression case', function () {
