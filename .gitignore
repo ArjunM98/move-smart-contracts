@@ -33,7 +33,7 @@ build/Release
 node_modules
 tmp/
 blob-local-storage/
-verificationTools/
+verificationTools/nuXmv
 
 # bundle js files
 *.bundle.js
