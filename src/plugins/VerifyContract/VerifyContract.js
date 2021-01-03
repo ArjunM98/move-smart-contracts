@@ -239,18 +239,18 @@ define([
     let propertiesTxt = ''
     let properties = []
     if (currentConfig.templateOne !== '') {
-      properties = self.prototype.parseProperties(model, currentConfig.templateOne)
+      properties = self.CTLProperties.parseProperties(model, currentConfig.templateOne)
       propertiesSMV += self.CTLProperties.generateFirstTemplateProperties(bipTransitionsToSMVNames, actionNamesToTransitionNames, properties)
       propertiesTxt += self.CTLProperties.generateFirstTemplatePropertiesTxt(properties)
     }
     if (currentConfig.templateTwo !== '') {
-      properties = self.prototype.parseProperties(model, currentConfig.templateTwo)
+      properties = self.CTLProperties.parseProperties(model, currentConfig.templateTwo)
       propertiesSMV += self.CTLProperties.generateSecondTemplateProperties(bipTransitionsToSMVNames, actionNamesToTransitionNames, properties)
       fairnessProperties += self.CTLProperties.generateSecondTemplateFairnessProperties(bipTransitionsToSMVNames, actionNamesToTransitionNames, properties)
       propertiesTxt += self.CTLProperties.generateSecondTemplatePropertiesTxt(properties)
     }
     if (currentConfig.templateThree !== '') {
-      properties = self.prototype.parseProperties(model, currentConfig.templateThree)
+      properties = self.CTLProperties.parseProperties(model, currentConfig.templateThree)
       propertiesSMV += self.CTLProperties.generateThirdTemplateProperties(bipTransitionsToSMVNames, actionNamesToTransitionNames, properties)
       fairnessProperties += self.CTLProperties.generateThirdTemplateFairnessProperties(bipTransitionsToSMVNames, actionNamesToTransitionNames, properties)
       propertiesTxt += self.CTLProperties.generateThirdTemplatePropertiesTxt(properties)
