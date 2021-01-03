@@ -5,176 +5,176 @@
  */
 
 define([
-    'js/Constants',
-    'js/PanelBase/PanelBase',
-    'js/PanelManager/IActivePanel',
-    'common/util/guid',
-    './reactViz.bundle',
-    'css!./reactViz.bundle.css'
+  'js/Constants',
+  'js/PanelBase/PanelBase',
+  'js/PanelManager/IActivePanel',
+  'common/util/guid',
+  './reactViz.bundle',
+  'css!./reactViz.bundle.css'
 ], function (CONSTANTS,
-             PanelBase,
-             IActivePanel,
-             guid,
-             reactViz) {
-    'use strict';
+  PanelBase,
+  IActivePanel,
+  guid,
+  reactViz) {
+  'use strict'
 
-    const WebGMEReactPanels = {};
+  const WebGMEReactPanels = {}
 
-    function MoveCodeEditorPanel(layoutManager, params) {
-        const options = {};
-        // set properties from options
-        options[PanelBase.OPTIONS.LOGGER_INSTANCE_NAME] = 'MoveCodeEditorPanel';
-        options[PanelBase.OPTIONS.FLOATING_TITLE] = true;
+  function MoveCodeEditorPanel (layoutManager, params) {
+    const options = {}
+    // set properties from options
+    options[PanelBase.OPTIONS.LOGGER_INSTANCE_NAME] = 'MoveCodeEditorPanel'
+    options[PanelBase.OPTIONS.FLOATING_TITLE] = true
 
-        // call parent's constructor
-        PanelBase.apply(this, [options, layoutManager]);
+    // call parent's constructor
+    PanelBase.apply(this, [options, layoutManager])
 
-        WebGMEGlobal.WebGMEReactPanels = WebGMEReactPanels;
+    WebGMEGlobal.WebGMEReactPanels = WebGMEReactPanels
 
-        this.client = params.client;
-        this.activeNode = null;
+    this.client = params.client
+    this.activeNode = null
 
-        this.appId = `${guid()}`;
+    this.appId = `${guid()}`
 
-        // initialize UI
-        this.initialize();
+    // initialize UI
+    this.initialize()
 
-        this.logger.debug('ctor finished');
+    this.logger.debug('ctor finished')
+  }
+
+  // inherit from PanelBaseWithHeader
+  _.extend(MoveCodeEditorPanel.prototype, PanelBase.prototype)
+  _.extend(MoveCodeEditorPanel.prototype, IActivePanel.prototype)
+
+  MoveCodeEditorPanel.prototype.initialize = function initialize () {
+    this.$el.prop('id', this.appId)
+    this.$el.css({
+      width: '100%',
+      height: '100%'
+    })
+
+    this.activeNode = WebGMEGlobal.State.getActiveObject()
+
+    this.stateMediator = {
+      // Called by react component
+      setActiveNode: (activeNode) => {
+        if (typeof activeNode === 'string' && this.activeNode !== activeNode) {
+          this.activeNode = activeNode
+          WebGMEGlobal.State.registerActiveObject(activeNode)
+        }
+      },
+      setActiveSelection: (activeSelection) => {
+        WebGMEGlobal.State.registerActiveSelection(activeSelection)
+      },
+      // Overwritten by the react-component
+      onActiveNodeChange: (activeNode) => {
+        console.warn('onActiveNodeChange not overwritten by react component..', activeNode)
+      },
+      onActiveSelectionChange: (activeSelection) => {
+        console.warn('onActiveSelectionChange not overwritten by react component..', activeSelection)
+      },
+      // Life-cycle placeholders.
+      onActivate: () => {
+        console.warn('onActivate not overwritten by react component')
+      },
+      onDeactivate: () => {
+        console.warn('onDeactivate not overwritten by react component')
+      },
+      onDestroy: () => {
+        console.warn('onDestroy not overwritten by react component')
+      },
+      onReadOnlyChanged: (isReadonly) => {
+        console.warn('onReadOnlyChanged not overwritten by react component', isReadonly)
+      },
+      onResize: (width, height) => {
+        console.warn('onResize not overwritten by react component', width, height)
+      }
     }
 
-    // inherit from PanelBaseWithHeader
-    _.extend(MoveCodeEditorPanel.prototype, PanelBase.prototype);
-    _.extend(MoveCodeEditorPanel.prototype, IActivePanel.prototype);
+    const initialState = {
+      // The UI state, these can be modified by the react app as well.
+      activeNode: this.activeNode,
+      activeSelection: WebGMEGlobal.State.getActiveSelection(),
 
-    MoveCodeEditorPanel.prototype.initialize = function initialize() {
-        this.$el.prop('id', this.appId);
-        this.$el.css({
-            width: '100%',
-            height: '100%',
-        });
+      // activeTab: WebGMEGlobal.State.getActiveTab(),
+      // activeAspect: WebGMEGlobal.State.getActiveAspect(),
 
-        this.activeNode = WebGMEGlobal.State.getActiveObject();
+      // Panel state (are passed in by the e.g. split-panel)
+      isActivePanel: false,
+      readOnly: false
+      // size: {
+      //     width: 0,
+      //     height: 0,
+      // },
+    }
 
-        this.stateMediator = {
-            // Called by react component
-            setActiveNode: (activeNode) => {
-                if (typeof activeNode === 'string' && this.activeNode !== activeNode) {
-                    this.activeNode = activeNode;
-                    WebGMEGlobal.State.registerActiveObject(activeNode);
-                }
-            },
-            setActiveSelection: (activeSelection) => {
-                WebGMEGlobal.State.registerActiveSelection(activeSelection);
-            },
-            // Overwritten by the react-component
-            onActiveNodeChange: (activeNode) => {
-                console.warn('onActiveNodeChange not overwritten by react component..', activeNode);
-            },
-            onActiveSelectionChange: (activeSelection) => {
-                console.warn('onActiveSelectionChange not overwritten by react component..', activeSelection);
-            },
-            // Life-cycle placeholders.
-            onActivate: () => {
-                console.warn('onActivate not overwritten by react component');
-            },
-            onDeactivate: () => {
-                console.warn('onDeactivate not overwritten by react component');
-            },
-            onDestroy: () => {
-                console.warn('onDestroy not overwritten by react component');
-            },
-            onReadOnlyChanged: (isReadonly) => {
-                console.warn('onReadOnlyChanged not overwritten by react component', isReadonly);
-            },
-            onResize: (width, height) => {
-                console.warn('onResize not overwritten by react component', width, height);
-            },
-        };
+    WebGMEReactPanels[this.appId] = {
+      client: this.client,
+      initialized: false,
+      initialState,
+      stateMediator: this.stateMediator
+    }
+  }
 
-        const initialState = {
-            // The UI state, these can be modified by the react app as well.
-            activeNode: this.activeNode,
-            activeSelection: WebGMEGlobal.State.getActiveSelection(),
+  MoveCodeEditorPanel.prototype.afterAppend = function afterAppend () {
+    reactViz(this.appId)
+  }
 
-            // activeTab: WebGMEGlobal.State.getActiveTab(),
-            // activeAspect: WebGMEGlobal.State.getActiveAspect(),
+  MoveCodeEditorPanel.prototype.onReadOnlyChanged = function onReadOnlyChanged (isReadOnly) {
+    // apply parent's onReadOnlyChanged
+    PanelBase.prototype.onReadOnlyChanged.call(this, isReadOnly)
+    this.stateMediator.onReadOnlyChanged(isReadOnly)
+  }
 
-            // Panel state (are passed in by the e.g. split-panel)
-            isActivePanel: false,
-            readOnly: false,
-            // size: {
-            //     width: 0,
-            //     height: 0,
-            // },
-        };
+  MoveCodeEditorPanel.prototype.onResize = function onResize (width, height) {
+    this.stateMediator.onResize(width, height)
+  }
 
-        WebGMEReactPanels[this.appId] = {
-            client: this.client,
-            initialized: false,
-            initialState,
-            stateMediator: this.stateMediator,
-        };
-    };
+  MoveCodeEditorPanel.prototype.stateActiveObjectChanged = function stateActiveObjectChanged (model, activeNode) {
+    if (this.activeNode !== activeNode) {
+      this.activeNode = activeNode
+      this.stateMediator.onActiveNodeChange(activeNode)
+    }
+  }
 
-    MoveCodeEditorPanel.prototype.afterAppend = function afterAppend() {
-        reactViz(this.appId);
-    };
+  MoveCodeEditorPanel.prototype.stateActiveSelectionChanged = function stateActiveSelectionChanged (model, activeSelection) {
+    this.stateMediator.onActiveSelectionChange(activeSelection)
+  }
 
-    MoveCodeEditorPanel.prototype.onReadOnlyChanged = function onReadOnlyChanged(isReadOnly) {
-        // apply parent's onReadOnlyChanged
-        PanelBase.prototype.onReadOnlyChanged.call(this, isReadOnly);
-        this.stateMediator.onReadOnlyChanged(isReadOnly);
-    };
+  /* * * * * * * * Visualizer life cycle callbacks * * * * * * * */
+  MoveCodeEditorPanel.prototype.attachClientEventListeners = function attachClientEventListeners () {
+    this.detachClientEventListeners()
+    WebGMEGlobal.State.on(`change:${CONSTANTS.STATE_ACTIVE_OBJECT}`, this.stateActiveObjectChanged, this)
+    WebGMEGlobal.State.on(`change:${CONSTANTS.STATE_ACTIVE_SELECTION}`, this.stateActiveSelectionChanged, this)
+  }
 
-    MoveCodeEditorPanel.prototype.onResize = function onResize(width, height) {
-        this.stateMediator.onResize(width, height);
-    };
+  MoveCodeEditorPanel.prototype.detachClientEventListeners = function detachClientEventListeners () {
+    WebGMEGlobal.State.off(`change:${CONSTANTS.STATE_ACTIVE_OBJECT}`, this.stateActiveObjectChanged)
+    WebGMEGlobal.State.off(`change:${CONSTANTS.STATE_ACTIVE_SELECTION}`, this.stateActiveSelectionChanged)
+  }
 
-    MoveCodeEditorPanel.prototype.stateActiveObjectChanged = function stateActiveObjectChanged(model, activeNode) {
-        if (this.activeNode !== activeNode) {
-            this.activeNode = activeNode;
-            this.stateMediator.onActiveNodeChange(activeNode);
-        }
-    };
+  MoveCodeEditorPanel.prototype.destroy = function destroy () {
+    this.detachClientEventListeners()
+    this.stateMediator.onDestroy()
+    delete WebGMEReactPanels[this.appId]
+    PanelBase.prototype.destroy.call(this)
+  }
 
-    MoveCodeEditorPanel.prototype.stateActiveSelectionChanged = function stateActiveSelectionChanged(model, activeSelection) {
-        this.stateMediator.onActiveSelectionChange(activeSelection);
-    };
+  MoveCodeEditorPanel.prototype.onActivate = function onActivate () {
+    this.attachClientEventListeners()
+    this.stateMediator.onActivate()
+    if (typeof this.activeNode === 'string') {
+      WebGMEGlobal.State.registerActiveObject(
+        this.activeNode,
+        { suppressVisualizerFromNode: true }
+      )
+    }
+  }
 
-    /* * * * * * * * Visualizer life cycle callbacks * * * * * * * */
-    MoveCodeEditorPanel.prototype.attachClientEventListeners = function attachClientEventListeners() {
-        this.detachClientEventListeners();
-        WebGMEGlobal.State.on(`change:${CONSTANTS.STATE_ACTIVE_OBJECT}`, this.stateActiveObjectChanged, this);
-        WebGMEGlobal.State.on(`change:${CONSTANTS.STATE_ACTIVE_SELECTION}`, this.stateActiveSelectionChanged, this);
-    };
+  MoveCodeEditorPanel.prototype.onDeactivate = function onDeactivate () {
+    this.detachClientEventListeners()
+    this.stateMediator.onDeactivate()
+  }
 
-    MoveCodeEditorPanel.prototype.detachClientEventListeners = function detachClientEventListeners() {
-        WebGMEGlobal.State.off(`change:${CONSTANTS.STATE_ACTIVE_OBJECT}`, this.stateActiveObjectChanged);
-        WebGMEGlobal.State.off(`change:${CONSTANTS.STATE_ACTIVE_SELECTION}`, this.stateActiveSelectionChanged);
-    };
-
-    MoveCodeEditorPanel.prototype.destroy = function destroy() {
-        this.detachClientEventListeners();
-        this.stateMediator.onDestroy();
-        delete WebGMEReactPanels[this.appId];
-        PanelBase.prototype.destroy.call(this);
-    };
-
-    MoveCodeEditorPanel.prototype.onActivate = function onActivate() {
-        this.attachClientEventListeners();
-        this.stateMediator.onActivate();
-        if (typeof this.activeNode === 'string') {
-            WebGMEGlobal.State.registerActiveObject(
-                this.activeNode,
-                {suppressVisualizerFromNode: true},
-            );
-        }
-    };
-
-    MoveCodeEditorPanel.prototype.onDeactivate = function onDeactivate() {
-        this.detachClientEventListeners();
-        this.stateMediator.onDeactivate();
-    };
-
-    return MoveCodeEditorPanel;
-});
+  return MoveCodeEditorPanel
+})
