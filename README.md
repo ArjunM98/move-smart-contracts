@@ -4,7 +4,7 @@ Tool for the synthesis and verification of Move smart contracts
 ## Install Dependencies
 
 Install the following: 
-- NodeJS, 14.x
+- NodeJS, 10.x
 - MongoDB
 - Git
 
