@@ -408,7 +408,7 @@ define([
       states: states,
       transitions: transitions,
       initialState: initialState,
-      finalStates: finalStates,
+      finalStates: finalStates
     }
   }
 
