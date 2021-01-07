@@ -25,7 +25,12 @@ config.requirejsPaths = {
   widgets: './src/visualizers/widgets',
   'move-smart-contracts': './src/common'
 }
+if (process.env.dockerimg) {
+  // Blob files storage location
+  config.blob.fsDir = '/dockershare/blob-local-storage'
+}
 
-config.mongo.uri = 'mongodb://127.0.0.1:27017/move-smart-contracts'
+// Gets the right address of the linked mongodb container
+config.mongo.uri = process.env.DOCKER_IMG ? 'mongodb://mongo' : 'mongodb://127.0.0.1:27017'
 validateConfig(config)
 module.exports = config
