@@ -7,14 +7,11 @@ RUN apt-get update && apt-get install -y openjdk-8-jdk
 # Define working directory
 WORKDIR /projects/move-smart-contracts
 
-# Copy over dependencies from package.json and package-lock.json
-COPY package*.json ./
-
 # Copy over application code to working directory
 COPY . /projects/move-smart-contracts
 
 # Install dependencies
-RUN npm install
+RUN npm ci
 
 # Build scripts
 RUN npm run-script build
