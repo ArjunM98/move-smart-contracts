@@ -9,8 +9,7 @@ define([
   'js/PanelBase/PanelBase',
   'js/PanelManager/IActivePanel',
   'common/util/guid',
-  '../ReactVisualizerBundles/moveCodeEditor.reactViz.bundle',
-  'css!./reactViz.bundle.css'
+  '../ReactVisualizerBundles/moveCodeEditor.reactViz.bundle'
 ], function (CONSTANTS,
   PanelBase,
   IActivePanel,

@@ -9,8 +9,7 @@ define([
   'js/PanelBase/PanelBase',
   'js/PanelManager/IActivePanel',
   'common/util/guid',
-  '../ReactVisualizerBundles/verificationProperties.reactViz.bundle',
-  'css!./reactViz.bundle.css'
+  '../ReactVisualizerBundles/verificationProperties.reactViz.bundle'
 ], function (CONSTANTS,
   PanelBase,
   IActivePanel,
@@ -55,6 +54,8 @@ define([
 
     this.activeNode = WebGMEGlobal.State.getActiveObject()
 
+    // TO-DO: For this specific visualizer, the implementation of these handlers does not affect the visualizer behaviour itself.
+    // These handlers should eventually be defined for completeness as they are required.
     this.stateMediator = {
       // Called by react component
       setActiveNode: (activeNode) => {

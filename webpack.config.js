@@ -2,7 +2,6 @@
 
 const path = require('path')
 const WrapperPlugin = require('wrapper-webpack-plugin')
-const ExtractTextPlugin = require('extract-text-webpack-plugin')
 
 module.exports = {
   entry: {
@@ -18,8 +17,7 @@ module.exports = {
       test: /\.js$/,
       header: 'define([], function () {\nreturn function (VISUALIZER_INSTANCE_ID) {',
       footer: '};\n});'
-    }),
-    new ExtractTextPlugin('reactViz.bundle.css')
+    })
   ],
   module: {
     rules: [
@@ -29,12 +27,6 @@ module.exports = {
         use: [
           'babel-loader'
         ]
-      },
-      {
-        test: /\.css$/,
-        loader: ExtractTextPlugin.extract({
-          use: 'css-loader'
-        })
       }
     ]
   },
