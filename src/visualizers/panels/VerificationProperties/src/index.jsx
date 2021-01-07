@@ -1,11 +1,12 @@
+/* globals VISUALIZER_INSTANCE_ID, window, document */
 /**
  * This file is specific for the wrapper in webgme. Note how the VISUALIZER_INSTANCE_ID
- * is defined in the wrapper inside webpack.config.js and later passed by the MoveCodeEditorPanel.
+ * is defined in the wrapper inside webpack.config.js and later passed by the WebGMEReactVizPanel.
  */
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import ReactViz from './ReactViz';
+import VerificationProperties from './VerificationProperties';
 
 window.WebGMEGlobal.WebGMEReactPanels[VISUALIZER_INSTANCE_ID].initialized = true;
 
@@ -14,6 +15,10 @@ window.WebGMEGlobal.WebGMEReactPanels[VISUALIZER_INSTANCE_ID].stateMediator.onDe
 };
 
 ReactDOM.render(
-    <ReactViz />,
+    <VerificationProperties
+        gmeClient={window.WebGMEGlobal.WebGMEReactPanels[VISUALIZER_INSTANCE_ID].client}
+        stateMediator={window.WebGMEGlobal.WebGMEReactPanels[VISUALIZER_INSTANCE_ID].stateMediator}
+        initialState={window.WebGMEGlobal.WebGMEReactPanels[VISUALIZER_INSTANCE_ID].initialState}
+    />,
     document.getElementById(VISUALIZER_INSTANCE_ID),
 );
