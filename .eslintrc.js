@@ -6,7 +6,8 @@ module.exports = {
     es2021: true
   },
   extends: [
-    'standard'
+    'standard',
+    'plugin:json/recommended'
   ],
   ignorePatterns: [
     '/src/visualizers/panels/ReactVisualizerBundles'
