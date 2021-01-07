@@ -121,12 +121,16 @@ const Template = ({ header, schema, inputName, submitCallback }) => {
     );
 };
 
+Template.defaultProps = {
+    inputName: "Input"
+}
+
 // Expect template string with `[input]` where there should be an input box
 Template.propTypes = {
-    header: PropTypes.string,
-    schema: PropTypes.string,
+    header: PropTypes.string.isRequired,
+    schema: PropTypes.string.isRequired,
     inputName: PropTypes.string,
-    submitCallback: PropTypes.func
+    submitCallback: PropTypes.func.isRequired
 }
 
 export default Template;
