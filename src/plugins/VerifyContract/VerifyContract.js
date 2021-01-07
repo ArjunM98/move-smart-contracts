@@ -11,7 +11,6 @@ define([
   'plugin/PluginConfig',
   'text!./metadata.json',
   'plugin/PluginBase',
-  'scsrc/ModelTransformation/conformanceTransformation',
   'scsrc/ModelTransformation/augmentTransitionSystem',
   'scsrc/CTLTransformation/CTLProperties',
   'scsrc/BIPTemplates/ejsCache',
@@ -21,7 +20,6 @@ define([
   PluginConfig,
   pluginMetadata,
   PluginBase,
-  conformanceTransformation,
   AugmentTransitionSystem,
   CTLProperties,
   ejsCache,
@@ -159,8 +157,6 @@ define([
 
     // Build model structure
     let model = VerifyContract.prototype.buildModel.call(self, nodes, contract)
-    // Safely integrate initial action into model interface
-    model = conformanceTransformation(model)
     // Augment Model
     model = self.AugmentTransitionSystem.augmentModel(model)
     // BIP model transformation
@@ -413,7 +409,6 @@ define([
       transitions: transitions,
       initialState: initialState,
       finalStates: finalStates,
-      initialAction: self.core.getAttribute(node, 'initialAction')
     }
   }
 
