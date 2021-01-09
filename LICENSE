@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2017
+Copyright (c) 2020-2021
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,3 +19,15 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+The following copyrights/repositories aided in the development of this project:
+Copyright (c) 2012-2019 Vanderbilt University, ISIS //WebGME (https://github.com/webgme/webgme) and WebGME Engine (https://github.com/webgme/webgme-engine)
+Copyright (c) 2017 //VeriSolid/smart-contracts (https://github.com/VeriSolid/smart-contracts), anmavrid/smart-contracts (https://github.com/anmavrid/smart-contracts), and nelaturuk/smart-contracts (https://github.com/nelaturuk/smart-contracts)
+Copyright (c) 2018 Max Brunsfeld //Tree-sitter (https://github.com/tree-sitter/tree-sitter)
+Copyright (c) 2020 nonsense0202 //Tree-sitter-move (https://github.com/move-hub/tree-sitter-move)
+Copyright (c) 2015-present Dan Abramov //Redux (https://github.com/reduxjs/redux)
+Copyright (c) Facebook, Inc. and its affiliates. //React (https://github.com/facebook/react), react-dom (https://github.com/facebook/react/tree/master/packages/react-dom), prop-types (https://github.com/facebook/prop-types/blob/master/LICENSE)
+Copyright (c) 2014 Call-Em-All //Material-ui/core and Material-ui/icons (https://github.com/mui-org/material-ui)
+Copyright jQuery Foundation and other contributors, https://jquery.org/ //RequireJs (https://github.com/requirejs/requirejs)
+Copyright (c) 2016-present Leon Shi //React-monaco-editor (https://github.com/react-monaco-editor/react-monaco-editor)
+Copyright (c) 2017 Moshe Kolodny //Immutability-helper (https://github.com/kolodny/immutability-helper)
