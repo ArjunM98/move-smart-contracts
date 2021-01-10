@@ -369,7 +369,9 @@ define([
 
     // get path of each child node from contract main node
     const pathToName = {}
-    for (const childPath of self.core.getChildrenPaths(node)) { pathToName[childPath] = self.core.getAttribute(nodes[childPath], 'name') }
+    for (const childPath of self.core.getChildrenPaths(node)) { 
+      pathToName[childPath] = self.core.getAttribute(nodes[childPath], 'name') 
+    }
 
     const states = []
     const transitions = []
@@ -381,13 +383,15 @@ define([
       const child = nodes[childPath]
       const childName = self.core.getAttribute(child, 'name')
 
-      if (self.isMetaTypeOf(child, self.META.State)) { states.push(childName) } else if (self.isMetaTypeOf(child, self.META.InitialState)) {
+      if (self.isMetaTypeOf(child, self.META.State)) { 
+        states.push(childName) 
+      } else if (self.isMetaTypeOf(child, self.META.InitialState)) {
         states.push(childName)
         initialState = childName
       } else if (self.isMetaTypeOf(child, self.META.FinalState)) {
         states.push(childName)
         finalStates.push(childName)
-      } else if (self.isMetaTypeOf(child, self.META.Transition)) {
+      } else if (self.isMetaTypeOf(child, self.META.Transition) || self.isMetaTypeOf(child, self.META.CreateTransition)) {
         const transition = {
           name: childName,
           src: pathToName[self.core.getPointerPath(child, 'src')],
@@ -399,7 +403,7 @@ define([
           tags: self.core.getAttribute(child, 'tags')
         }
         transitions.push(transition)
-      }
+      } 
     }
 
     // Complete model object built from nodes
