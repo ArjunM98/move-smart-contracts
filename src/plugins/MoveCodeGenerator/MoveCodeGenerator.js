@@ -69,7 +69,7 @@ define([
      */
     MoveCodeGenerator.prototype.main = function (callback) {
 
-        var self = this,
+        let self = this,
             nodes,
             artifact;
 
@@ -125,7 +125,7 @@ define([
 
         return Q.all(promises)
             .then(function (result) {
-                var i,
+                let i,
                     files = {};
 
                 for (i = 0; i < fileNames.length; i += 1) {
@@ -141,7 +141,7 @@ define([
     };
 
     MoveCodeGenerator.prototype.getContractPaths = function (nodes) {
-        var self = this,
+        let self = this,
             path,
             node,
             //Using an array for the multiple contracts extention
@@ -157,7 +157,7 @@ define([
     };
 
     MoveCodeGenerator.prototype.getContractFile = function (contractNode, violations, callback) {
-        var self = this,
+        let self = this,
             fileContent,
             i;
 
@@ -171,12 +171,12 @@ define([
     };
 
     MoveCodeGenerator.prototype.parseResult = function (contractNode, fileContent, violations) {
-        var self = this,
+        let self = this,
             fileContent,
             i, 
             tree = self.parser.parse(fileContent);
 
-        var cursor = tree.walk(),
+        let cursor = tree.walk(),
             moreSiblings = true,
             moreChildren = true, 
             depth = 0;
@@ -212,7 +212,7 @@ define([
     }
 
     MoveCodeGenerator.prototype.getViolations = function (contracts, nodes) {
-        var contractNames = {},
+        let contractNames = {},
             name, type, node,
             child, childPath, childName,
             self = this,
@@ -268,7 +268,7 @@ define([
     };
 
     MoveCodeGenerator.prototype.hasChildViolations = function (child, childName, nameAndViolations) {
-        var self = this;
+        let self = this;
 
         if ((self.isMetaTypeOf(child, self.META.State)) || (self.isMetaTypeOf(child, self.META.InitialState))) {
             if (nameAndViolations.totalStateNames.hasOwnProperty(childName)) {

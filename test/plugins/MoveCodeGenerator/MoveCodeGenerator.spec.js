@@ -4,7 +4,7 @@
  */
 
 describe('MoveCodeGenerator', function () {
-    var testFixture = require('../../globals'),
+    let testFixture = require('../../globals'),
         gmeConfig = testFixture.getGmeConfig(),
         expect = testFixture.expect,
         logger = testFixture.logger.fork('MoveCodeGenerator'),
@@ -25,7 +25,7 @@ describe('MoveCodeGenerator', function () {
                 return storage.openDatabase();
             })
             .then(function () {
-                var importParam = {
+                let importParam = {
                     projectSeed: testFixture.path.join(testFixture.SEED_DIR, 'EmptyProject.webgmex'),
                     projectName: projectName,
                     branchName: 'master',
@@ -52,7 +52,7 @@ describe('MoveCodeGenerator', function () {
     });
 
     it('should run plugin and update the branch', function (done) {
-        var manager = new PluginCliManager(null, logger, gmeConfig),
+        let manager = new PluginCliManager(null, logger, gmeConfig),
             pluginConfig = {
             },
             context = {
