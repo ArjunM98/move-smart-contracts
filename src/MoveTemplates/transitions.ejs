@@ -1,0 +1,26 @@
+<% for (var i = 0; i < transitions.length; i += 1) { %> 
+fun <%- transitions[i].name %> (ownerAddr : address, <%- transitions[i].input %>) <% if (transitions[i].output != '') { %> : <%- transitions[i].output %> <% } %> acquires 
+{
+
+    let baseResource = borrow_global_mut<<%- name %>_res>(ownerAddr);
+
+    assert(baseResource.currState == <%- transitions[i].src %>);
+    <% if (transitions[i].guards != '') { %> 
+    assert(<%- transitions[i].guards %>);
+    <% } %>
+
+    <%if (transitions[i].statements != '') {%>
+    //State change
+    *baseResource.currState = b"InTransition";
+
+    //Actions
+    <%- transitions[i].statements %> 
+    <% } %>
+
+    <%if (transitions[i].src != transitions[i].dst || transitions[i].statements != '') {%>
+    //State change
+    *baseResource.currState = b"<%- transitions[i].dst %>";
+    <% } %>
+}
+<% } %>
+

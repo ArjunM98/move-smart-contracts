@@ -1,0 +1,7 @@
+fun <%- createTransitions[0].name %> (ownerAddr : &signer)
+{
+    move_to<<%- name %>_res>(ownerAddr, <%- name %>_res {
+        currState: b"<%- states[0].name %>"
+    });
+
+}

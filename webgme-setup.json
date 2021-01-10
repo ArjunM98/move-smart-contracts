@@ -21,6 +21,10 @@
       "VerifyContract": {
         "src": "src/plugins/VerifyContract",
         "test": "test/plugins/VerifyContract"
+      },
+      "MoveCodeGenerator": {
+        "src": "src/plugins/MoveCodeGenerator",
+        "test": "test/plugins/MoveCodeGenerator"
       }
     }
   },
