@@ -369,8 +369,8 @@ define([
 
     // get path of each child node from contract main node
     const pathToName = {}
-    for (const childPath of self.core.getChildrenPaths(node)) { 
-      pathToName[childPath] = self.core.getAttribute(nodes[childPath], 'name') 
+    for (const childPath of self.core.getChildrenPaths(node)) {
+      pathToName[childPath] = self.core.getAttribute(nodes[childPath], 'name')
     }
 
     const states = []
@@ -383,8 +383,8 @@ define([
       const child = nodes[childPath]
       const childName = self.core.getAttribute(child, 'name')
 
-      if (self.isMetaTypeOf(child, self.META.State)) { 
-        states.push(childName) 
+      if (self.isMetaTypeOf(child, self.META.State)) {
+        states.push(childName)
       } else if (self.isMetaTypeOf(child, self.META.InitialState)) {
         states.push(childName)
         initialState = childName
@@ -403,7 +403,7 @@ define([
           tags: self.core.getAttribute(child, 'tags')
         }
         transitions.push(transition)
-      } 
+      }
     }
 
     // Complete model object built from nodes
