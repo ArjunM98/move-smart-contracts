@@ -10,8 +10,8 @@ Install the following:
 - Java
 - GCC
 - https://nuxmv.fbk.eu/index.php?n=Download.Download
-    - Place the following file into the verificationTools folder
     - Note: If you are using the docker image to test locally, you MUST download the linux version
+    - Extract the downloaded file and place the contents of the "bin" folder (nuXmv file) into the verificationTools folder in the project
 
 ## Local Development
 
