@@ -2,7 +2,6 @@ define([
   'q'
 ], function (
   Q) {
-
   function _getBasicModel (core, node) {
     return {
       name: core.getAttribute(node, 'name'),
@@ -32,71 +31,71 @@ define([
   }
 
   function getModelOfContract (core, contractNode) {
-    let deferred = Q.defer(),
-      model = {},
-      nameBasedSort = function (nodeA, nodeB) {
-        let nameA = core.getAttribute(nodeA, 'name'),
-          nameB = core.getAttribute(nodeB, 'name');
-        if (nameA < nameB) {
-          return -1;
-        } else if (nameA > nameB) {
-          return 1;
-        }
-        return 0;
-      };
+    const deferred = Q.defer()
+    const model = {}
+    const nameBasedSort = function (nodeA, nodeB) {
+      const nameA = core.getAttribute(nodeA, 'name')
+      const nameB = core.getAttribute(nodeB, 'name')
+      if (nameA < nameB) {
+        return -1
+      } else if (nameA > nameB) {
+        return 1
+      }
+      return 0
+    }
 
-    model.path = core.getPath(contractNode);
-    model.name = core.getAttribute(contractNode, 'name');
-    model.resources = core.getAttribute(contractNode, 'resources');
-    model.imports = core.getAttribute(contractNode, 'imports');
-    model.initial = '';
-    model.transitions = [];
-    model.states = [];
-    model.finalStates = [];
-    model.createTransitions = [];
+    model.path = core.getPath(contractNode)
+    model.name = core.getAttribute(contractNode, 'name')
+    model.resources = core.getAttribute(contractNode, 'resources')
+    model.imports = core.getAttribute(contractNode, 'imports')
+    model.initial = ''
+    model.transitions = []
+    model.states = []
+    model.finalStates = []
+    model.createTransitions = []
 
     core.loadChildren(contractNode)
       .then(function (children) {
-        let i, childModel,
-          path2Name = {};
+        let i; let childModel
+        const path2Name = {}
 
-        children.sort(nameBasedSort);
+        children.sort(nameBasedSort)
 
         for (i = 0; i < children.length; i += 1) {
-          path2Name[core.getPath(children[i])] = core.getAttribute(children[i], 'name');
+          path2Name[core.getPath(children[i])] = core.getAttribute(children[i], 'name')
         }
 
         for (i = 0; i < children.length; i += 1) {
-          childModel = _getBasicModel(core, children[i]);
-          //TODO not the nicest way and not too change-resistant
+          childModel = _getBasicModel(core, children[i])
+          // TODO not the nicest way and not too change-resistant
           switch (childModel.type) {
             case 'Transition':
-              _basicModel2TransitionModel(core, children[i], path2Name, childModel);
-              model.transitions.push(childModel);
-              break;
+              _basicModel2TransitionModel(core, children[i], path2Name, childModel)
+              model.transitions.push(childModel)
+              break
             case 'CreateTransition':
-              _basicModel2CreateTransitionModel(core, children[i], path2Name, childModel);
-              model.createTransitions.push(childModel);
-              break;
+              _basicModel2CreateTransitionModel(core, children[i], path2Name, childModel)
+              model.createTransitions.push(childModel)
+              break
             case 'InitialState':
-              model.initial = childModel.name;
-              break;
+              model.initial = childModel.name
+              break
             case 'State':
-              model.states.push(childModel);
-              break;
+              model.states.push(childModel)
+              break
             case 'FinalState':
-              model.finalStates.push(childModel);
-              break;
+              model.finalStates.push(childModel)
+              break
           }
         }
-        deferred.resolve(model);
+        deferred.resolve(model)
       })
-      .catch(deferred.reject);
+      .catch(deferred.reject)
 
-    return deferred.promise;
+    return deferred.promise
   }
 
   return {
     getModelOfContract: getModelOfContract
-  };
-});
+  }
+})
