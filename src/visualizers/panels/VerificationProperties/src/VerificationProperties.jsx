@@ -8,6 +8,7 @@ const schemaTwo = (a = "[input]", b = "[input]") => `${a} can only happen after 
 const schemaThree = (a = "[input]", b = "[input]", c = "[input]") => `If ${a} happens, ${b} can only happen after ${c} happens`;
 const schemaFour = (a = "[input]", b = "[input]") => `${a} will eventually happen after ${b} happens`;
 
+//To-Do: Expecting "sync" issues when multiple people are editing the same model, need to fix this if common case
 
 const reducer = (state, action) => {
     // Even though the arrays are modified, a new state object is created
