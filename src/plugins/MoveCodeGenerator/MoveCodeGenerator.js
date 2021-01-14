@@ -44,7 +44,6 @@ define([
     this.pluginMetadata = pluginMetadata
     this.parser = new Parser()
     this.parser.setLanguage(MoveGrammer)
-    // this.query = new Parser.Query(MoveGrammer, `struct_definition`)
   }
 
   /**
