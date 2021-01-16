@@ -70,7 +70,7 @@ describe('CTLPropertiesForBlindAuction', function () {
         const properties = [[['close'], ['finish']]]
 
         const generatedProperties = CTL.generateFirstTemplatePropertiesTxt(properties)
-        const expected = '(close) can happen only after (finish)\n'
+        const expected = '(close) cannot happen after (finish)\n'
 
         expect(generatedProperties).to.eql(expected)
       })
@@ -79,7 +79,7 @@ describe('CTLPropertiesForBlindAuction', function () {
         const properties = [[['close'], ['finish']], [['cancelRB', 'cancelABB'], ['finish']]]
 
         const generatedProperties = CTL.generateFirstTemplatePropertiesTxt(properties)
-        const expected = '(close) can happen only after (finish)\n(cancelRB|cancelABB) can happen only after (finish)\n'
+        const expected = '(close) cannot happen after (finish)\n(cancelRB|cancelABB) cannot happen after (finish)\n'
 
         expect(generatedProperties).to.eql(expected)
       })
