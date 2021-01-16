@@ -11,7 +11,6 @@ module.exports = {
   ],
   ignorePatterns: [
     '/src/visualizers/panels/ReactVisualizerBundles',
-    'src/visualizers/panels/MoveCodeEditor/reactViz.bundle.js'
   ],
   parserOptions: {
     ecmaVersion: 12
