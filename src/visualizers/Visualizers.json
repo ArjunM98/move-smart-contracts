@@ -10,5 +10,11 @@
     "title": "Model Editor",
     "panel": "js/Panels/ModelEditor/ModelEditorPanel",
     "DEBUG_ONLY": false
+  },
+  {
+    "id": "VerificationProperties",
+    "title": "Verification Properties",
+    "panel": "panels/VerificationProperties/VerificationPropertiesPanel",
+    "DEBUG_ONLY": false
   }
 ]

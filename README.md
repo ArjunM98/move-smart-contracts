@@ -7,6 +7,11 @@ Install the following:
 - NodeJS, 10.x
 - MongoDB
 - Git
+- Java
+- GCC
+- https://nuxmv.fbk.eu/index.php?n=Download.Download
+    - Note: If you are using the docker image to test locally, you MUST download the linux version
+    - Extract the downloaded file and place the contents of the "bin" folder (nuXmv file) into the verificationTools folder in the project
 
 ## Local Development
 
@@ -48,6 +53,36 @@ For any changes to take affect, you will need to repeat Step 3 and Step 5 from a
 ### Testing
 
 We write our tests using Mocha. You can run the tests using `npm test`.
+
+## Using the Docker Image for Tests
+
+To utilize the docker image to test locally: 
+
+1. Create a directory structure at the root/home directory of your computer (different from the project folder) like the following: 
+
+```
+dockershare
+--> blob-local-storage
+--> db
+```
+
+2. Within the project folder run the following command to build the doker image: 
+
+```
+docker-compose build
+
+# To run a clean re-build
+docker-compose build --no-cache
+```
+
+3. To run the docker image run the following command: 
+```
+# Output of the server is displayed within the current terminal/command prompt directly 
+docker-compose up
+
+# Run it as a background process
+docker-compose up -d
+```
 
 ## License
 

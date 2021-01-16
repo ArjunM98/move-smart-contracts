@@ -1,0 +1,23 @@
+version: '3'
+services:
+  webgme:
+    build:
+      context: .
+    restart: unless-stopped
+    depends_on:
+      - mongo
+    ports: 
+      - 8888:8888
+    volumes:
+      - ~/dockershare:/dockershare
+    environment:
+      DOCKER_IMG: 1
+      WAIT_HOSTS: mongo:27017
+  mongo:
+    image: mongo
+    restart: unless-stopped
+    container_name: 'mongo'
+    ports:
+      - 27017:27017
+    volumes:
+      - ~/dockershare/db:/data/db

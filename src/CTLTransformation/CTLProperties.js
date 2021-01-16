@@ -2,7 +2,7 @@ define([], function () {
   'use strict'
 
   // Default constructor
-  const CTLProperties = function () {}
+  const CTLProperties = function () { }
   CTLProperties.prototype.constructor = CTLProperties
 
   CTLProperties.prototype.parseProperties = function (model, properties) {
@@ -80,7 +80,7 @@ define([], function () {
         propertiesSMV += clause + '|'
       }
       propertiesSMV = propertiesSMV.slice(0, -1)
-      propertiesSMV += ') can happen only after ('
+      propertiesSMV += ') cannot happen after ('
       for (clause of property[1]) {
         propertiesSMV += clause + '|'
       }

@@ -11,7 +11,6 @@ define([
   'plugin/PluginConfig',
   'text!./metadata.json',
   'plugin/PluginBase',
-  'scsrc/ModelTransformation/conformanceTransformation',
   'scsrc/ModelTransformation/augmentTransitionSystem',
   'scsrc/CTLTransformation/CTLProperties',
   'scsrc/BIPTemplates/ejsCache',
@@ -21,7 +20,6 @@ define([
   PluginConfig,
   pluginMetadata,
   PluginBase,
-  conformanceTransformation,
   AugmentTransitionSystem,
   CTLProperties,
   ejsCache,
@@ -159,15 +157,13 @@ define([
 
     // Build model structure
     let model = VerifyContract.prototype.buildModel.call(self, nodes, contract)
-    // Safely integrate initial action into model interface
-    model = conformanceTransformation(model)
+
     // Augment Model
     model = self.AugmentTransitionSystem.augmentModel(model)
     // BIP model transformation
     const bipModel = ejs.render(ejsCache.contractType.complete, model)
 
     const execSync = require('child_process').execSync
-    const currentConfig = this.getCurrentConfig()
     if (fs && path) {
       try {
         fs.statSync(path)
@@ -182,7 +178,7 @@ define([
       const runbip2smv = 'java -jar ' + process.cwd() + '/verificationTools/bip-to-nusmv.jar ' + path + '/' + model.name + '.bip ' + path + '/' + model.name + '.smv'
 
       fs.writeFileSync(path + '/runbip2smv.sh', runbip2smv, 'utf8')
-      self.sendNotification('Starting the BIP to NuSMV translation..')
+      self.sendNotification('Starting the BIP to NuSMV translation.')
       try {
         execSync('/bin/bash ' + path + '/runbip2smv.sh')
       } catch (e) {
@@ -190,6 +186,11 @@ define([
         throw e
       }
       self.sendNotification('BIP to NuSMV translation successful.')
+
+      // To-Do: Can refactor generateProperties entirely to directly generate properties from ctlProperties attribute
+      // In spirit of moving fast, we create a PluginConfig object based on the ctlProperties attribute to minimize
+      // changes to existing logic as implemented in VeriSolid
+      const currentConfig = VerifyContract.prototype.createPluginConfig.call(self, nodes, contract)
 
       // Generate CTL properties
       VerifyContract.prototype.generateProperties.call(self, fs, path, model, currentConfig)
@@ -221,6 +222,66 @@ define([
       }
       self.sendNotification('NuSMV to BIP counterexamples translation successful.')
     }
+  }
+
+  VerifyContract.prototype.createPluginConfig = function (nodes, contract) {
+    const self = this
+    const node = nodes[contract]
+    let ctlProperties = self.core.getAttribute(node, 'ctlProperties')
+
+    // No CTL Properties specified
+    // Assumes that ctlProperties input is relatively "good" because it SHOULD be modified only through visualizer
+    if (
+      ctlProperties === undefined ||
+      ctlProperties === null ||
+      (ctlProperties.typeOne.length === 0 && ctlProperties.typeTwo.length === 0 && ctlProperties.typeThree.length === 0 && ctlProperties.typeFour.length === 0)
+    ) {
+      ctlProperties = {
+        typeOne: [],
+        typeTwo: [],
+        typeThree: [],
+        typeFour: []
+      }
+      self.sendNotification({
+        message: 'Verification running with no specified CTL properties. Add properties through the Verification Properties Visualizer on individual contracts.',
+        severity: 'warn'
+      })
+    }
+
+    const { typeOne, typeTwo, typeThree, typeFour } = ctlProperties
+
+    const makeTemplate = function (type) {
+      let template = ''
+
+      type.forEach((rule) => {
+        // Not first rule
+        if (template !== '') {
+          template = template + ';'
+        }
+
+        const numberOfActions = Object.keys(rule).length
+
+        for (let i = 0; i < numberOfActions; i++) {
+          template = template + rule[i]
+
+          // Not last action
+          if (i !== (numberOfActions - 1)) {
+            template = template + '#'
+          }
+        }
+      })
+
+      return template
+    }
+
+    const config = {
+      templateOne: makeTemplate(typeOne),
+      templateTwo: makeTemplate(typeTwo),
+      templateThree: makeTemplate(typeThree),
+      templateFour: makeTemplate(typeFour)
+    }
+
+    return new PluginConfig(config)
   }
 
   VerifyContract.prototype.generateProperties = function (fs, path, model, currentConfig) {
@@ -304,9 +365,9 @@ define([
         inINVAR = true
       } else if (line.includes('MODULE main')) {
         inModuleMain = true
-      // Find main module where NuSMV names are defined
-      // Index into pre-defined format of:
-      // ( (( (NuInteraction) = (NuI15) )) -> (BAUC_a14) )
+        // Find main module where NuSMV names are defined
+        // Index into pre-defined format of:
+        // ( (( (NuInteraction) = (NuI15) )) -> (BAUC_a14) )
       } else if (inModuleMain && inINVAR) {
         if (line.includes('Nu')) {
           const fields = line.split(/\(|\)/)
@@ -333,7 +394,9 @@ define([
 
     // get path of each child node from contract main node
     const pathToName = {}
-    for (const childPath of self.core.getChildrenPaths(node)) { pathToName[childPath] = self.core.getAttribute(nodes[childPath], 'name') }
+    for (const childPath of self.core.getChildrenPaths(node)) {
+      pathToName[childPath] = self.core.getAttribute(nodes[childPath], 'name')
+    }
 
     const states = []
     const transitions = []
@@ -345,13 +408,15 @@ define([
       const child = nodes[childPath]
       const childName = self.core.getAttribute(child, 'name')
 
-      if (self.isMetaTypeOf(child, self.META.State)) { states.push(childName) } else if (self.isMetaTypeOf(child, self.META.InitialState)) {
+      if (self.isMetaTypeOf(child, self.META.State)) {
+        states.push(childName)
+      } else if (self.isMetaTypeOf(child, self.META.InitialState)) {
         states.push(childName)
         initialState = childName
       } else if (self.isMetaTypeOf(child, self.META.FinalState)) {
         states.push(childName)
         finalStates.push(childName)
-      } else if (self.isMetaTypeOf(child, self.META.Transition)) {
+      } else if (self.isMetaTypeOf(child, self.META.Transition) || self.isMetaTypeOf(child, self.META.CreateTransition)) {
         const transition = {
           name: childName,
           src: pathToName[self.core.getPointerPath(child, 'src')],
@@ -372,8 +437,7 @@ define([
       states: states,
       transitions: transitions,
       initialState: initialState,
-      finalStates: finalStates,
-      initialAction: self.core.getAttribute(node, 'initialAction')
+      finalStates: finalStates
     }
   }
 

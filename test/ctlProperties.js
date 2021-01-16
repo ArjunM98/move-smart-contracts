@@ -4,59 +4,59 @@ const CTLProperties = requirejs('./src/CTLTransformation/CTLProperties.js')
 const CTL = new CTLProperties()
 
 describe('CTLPropertiesForBlindAuction', function () {
-  const bipTransitionsToSMVNames = { a39: '(NuInteraction) = (NuI40)', a19: '(NuInteraction) = (NuI20)', afinish_guard: '(NuInteraction) = (NuI8)', a24: '(NuInteraction) = (NuI25)', a36: '(NuInteraction) = (NuI37)', a25: '(NuInteraction) = (NuI26)', a6: '(NuInteraction) = (NuI7)', a35: '(NuInteraction) = (NuI36)', a33: '(NuInteraction) = (NuI34)', abid_guard: '(NuInteraction) = (NuI1)', a12: '(NuInteraction) = (NuI13)', awithdraw_guard: '(NuInteraction) = (NuI10)', aunbid_revert: '(NuInteraction) = (NuI22)', a26: '(NuInteraction) = (NuI27)', a18: '(NuInteraction) = (NuI19)', a27: '(NuInteraction) = (NuI28)', a17: '(NuInteraction) = (NuI18)', a38: '(NuInteraction) = (NuI39)', acancelABB_guard: '(NuInteraction) = (NuI4)', a32: '(NuInteraction) = (NuI33)', a37: '(NuInteraction) = (NuI38)', a8: '(NuInteraction) = (NuI9)', a40: '(NuInteraction) = (NuI41)', a23: '(NuInteraction) = (NuI24)', acancelRB_guard: '(NuInteraction) = (NuI6)', a2: '(NuInteraction) = (NuI3)', a1: '(NuInteraction) = (NuI2)', aunbid_guard: '(NuInteraction) = (NuI21)', a29: '(NuInteraction) = (NuI30)', a16: '(NuInteraction) = (NuI17)', a4: '(NuInteraction) = (NuI5)', aunbid_no_revert: '(NuInteraction) = (NuI23)', a13: '(NuInteraction) = (NuI14)', areveal_guard: '(NuInteraction) = (NuI31)', a15: '(NuInteraction) = (NuI16)', aclose_guard: '(NuInteraction) = (NuI29)', awithdraw_no_revert: '(NuInteraction) = (NuI12)', a31: '(NuInteraction) = (NuI32)', a34: '(NuInteraction) = (NuI35)', awithdraw_revert: '(NuInteraction) = (NuI11)', a14: '(NuInteraction) = (NuI15)' }
-  const actionNamesToTransitionNames = { bid: 'abid_guard', 'bid.bids[msg.sender].push(Bid({\n blindedBid: blindedBid,\n deposit: msg.value\n }));': 'a1', 'bid.pendingReturns[msg.sender] += msg.value;': 'a2', cancelABB: 'acancelABB_guard', cancelRB: 'acancelRB_guard', finish: 'afinish_guard', withdraw: 'awithdraw_guard', 'withdraw.uint amount = pendingReturns[msg.sender];': 'a12', 'withdraw.msg.sender.transfer(amount);': 'a15', 'withdraw.msg.sender.transfer(amount - highestBid);': 'a17', 'withdraw.pendingReturns[msg.sender] = 0;': 'a18', unbid: 'aunbid_guard', 'unbid.uint amount = pendingReturns[msg.sender];': 'a23', 'unbid.msg.sender.transfer(amount);': 'a25', 'unbid.pendingReturns[msg.sender] = 0;': 'a26', close: 'aclose_guard', reveal: 'areveal_guard', 'reveal.uint i = 0;': 'a31', 'reveal.var bid = bids[msg.sender][i];': 'a34', 'reveal.var (value, secret) = (values[i], secrets[i]);': 'a35', 'reveal.highestBid = value;': 'a37', 'reveal.highestBidder = msg.sender;': 'a38', 'reveal.i++;': 'a40' }
+  const bipTransitionsToSMVNames = { afinish_guard: '(NuInteraction) = (NuI19)', a9: '(NuInteraction) = (NuI10)', a12: '(NuInteraction) = (NuI13)', a14: '(NuInteraction) = (NuI15)', acreate_guard: '(NuInteraction) = (NuI22)', a15: '(NuInteraction) = (NuI16)', abid_guard: '(NuInteraction) = (NuI7)', astart_guard: '(NuInteraction) = (NuI1)', a3: '(NuInteraction) = (NuI4)', a4: '(NuInteraction) = (NuI5)', a13: '(NuInteraction) = (NuI14)', a20: '(NuInteraction) = (NuI21)', a22: '(NuInteraction) = (NuI23)', awithdraw_guard: '(NuInteraction) = (NuI3)', a7: '(NuInteraction) = (NuI8)', a16: '(NuInteraction) = (NuI17)', a10: '(NuInteraction) = (NuI11)', a23: '(NuInteraction) = (NuI24)', a8: '(NuInteraction) = (NuI9)', a17: '(NuInteraction) = (NuI18)', a19: '(NuInteraction) = (NuI20)', a5: '(NuInteraction) = (NuI6)', a11: '(NuInteraction) = (NuI12)', a1: '(NuInteraction) = (NuI2)' }
+  const actionNamesToTransitionNames =  { start: 'astart_guard', withdraw: 'awithdraw_guard', 'withdraw.let Auction {     \n\tbid,     \n    bidder: _,     \n    start_at: _, } = move_from<Auction<Currency>>(auction_owner_addr);': 'a3', 'withdraw.let bid_amount = Diem::value(&bid);': 'a4', 'withdraw.DiemAccount::deposit(bidder_addr, auction_owner_addr, bid, b"", b"");': 'a5', bid: 'abid_guard', 'bid.let auction = borrow_global_mut<Auction<Currency>>(auction_owner_addr);': 'a7', 'bid.let bid_amt = Diem::value(&bid);': 'a8', 'bid.let max_bid = Diem::value(&auction.max_bid);': 'a9', 'bid.assert(bid_amt > max_bid, 1);': 'a10', 'bid.assert(bidder_addr != auction.bidder, 1);': 'a11', 'bid.let to_send_back = Diem::withdraw(&mut auction.max_bid, max_bid);': 'a13', 'bid.DiemAccount::deposit<Currency>(bidder_addr, auction.bidder, to_send_back, b"", b"");': 'a14', 'bid.Diem::deposit(&mut auction.max_bid, bid);': 'a16', 'bid.*auction.bidder = bidder_addr;': 'a17', finish: 'afinish_guard', 'finish.let auction = borrow_global_mut<Auction<Currency>>(auction_owner_addr);': 'a19', 'finish.assert(auction.auction_start + 432000 == DiemTimestamp::now_seconds());': 'a20', create: 'acreate_guard', 'create.let auction_owner_addr = Signer::address_of(auction_owner);': 'a22', 'create.move_to<Auction<Currency>>(auction_owner, T {     \n\t\t\t\t\t\t\t\t\t\t\t\tDiem::zero<Currency>(),     \n                                                auction_owner_addr,     \n                                                DiemTimestamp::now_seconds() \n                                             }\n                           );': 'a23' }
   context('#generatingCTLProperties', function () {
     context('First Template case', function () {
-      // Type 1: <action> cannot happen after <action>": close#finish
-      it('Close cannot happen after finish', function () {
-        const properties = [[['close'], ['finish']]]
+      // Type 1: <action> cannot happen after <action>": bid#finish
+      it('bid cannot happen after finish', function () {
+        const properties = [[['bid'], ['finish']]]
 
         const generatedProperties = CTL.generateFirstTemplateProperties(bipTransitionsToSMVNames, actionNamesToTransitionNames, properties)
-        const expected = '-- AG ( finish -> AG (!(close)))\nCTLSPEC AG ( (NuInteraction) = (NuI8) -> AG (!((NuInteraction) = (NuI29))))\n\n'
+        const expected = '-- AG ( finish -> AG (!(bid)))\nCTLSPEC AG ( (NuInteraction) = (NuI19) -> AG (!((NuInteraction) = (NuI7))))\n\n'
 
         expect(generatedProperties).to.eql(expected)
       })
-      // close#finish;cancelRB|cancelABB#finish
-      it('Close cannot happen after finish and cancelRB or cancelABB cannot happen after finish', function () {
-        const properties = [[['close'], ['finish']], [['cancelRB', 'cancelABB'], ['finish']]]
+      // start|bid#finish
+      it('start or bid cannot happen after finish', function () {
+        const properties = [[['start','bid'], ['finish']]]
 
         const generatedProperties = CTL.generateFirstTemplateProperties(bipTransitionsToSMVNames, actionNamesToTransitionNames, properties)
-        const expected = '-- AG ( finish -> AG (!(close)))\nCTLSPEC AG ( (NuInteraction) = (NuI8) -> AG (!((NuInteraction) = (NuI29))))\n\n-- AG ( finish -> AG (!(cancelRB|cancelABB)))\nCTLSPEC AG ( (NuInteraction) = (NuI8) -> AG (!((NuInteraction) = (NuI6)|(NuInteraction) = (NuI4))))\n\n'
+        const expected = '-- AG ( finish -> AG (!(start|bid)))\nCTLSPEC AG ( (NuInteraction) = (NuI19) -> AG (!((NuInteraction) = (NuI1)|(NuInteraction) = (NuI7))))\n\n'
 
         expect(generatedProperties).to.eql(expected)
       })
     })
     context('Second Template case', function () {
       // Type 2: <action> can happen only after <action>
-      it('Finish can happen only after reveal', function () {
-        const properties = [[['finish'], ['reveal']]]
+      it('withdraw can happen only after finish', function () {
+        const properties = [[['withdraw'], ['finish']]]
 
         const generatedProperties = CTL.generateSecondTemplateProperties(bipTransitionsToSMVNames, actionNamesToTransitionNames, properties)
-        const expected = '-- A [ !((NuInteraction) = (NuI8)) U ((NuInteraction) = (NuI31))]\nCTLSPEC A [ !((NuInteraction) = (NuI8)) U ((NuInteraction) = (NuI31))]\n\n'
+        const expected = '-- A [ !((NuInteraction) = (NuI3)) U ((NuInteraction) = (NuI19))]\nCTLSPEC A [ !((NuInteraction) = (NuI3)) U ((NuInteraction) = (NuI19))]\n\n'
 
         expect(generatedProperties).to.eql(expected)
       })
     })
     context('Third Template case', function () {
-      // close#finish#reveal
+      // start#withdraw#finish
       // Type 3: If <action> happens, <action> can happen only after <action> happens
-      it('If close happens, finish can happen only after reveal happens', function () {
-        const properties = [[['close'], ['finish'], ['reveal']]]
+      it('If start happens, withdraw can only happen after finish happens', function () {
+        const properties = [[['start'], ['withdraw'], ['finish']]]
 
         const generatedProperties = CTL.generateThirdTemplateProperties(bipTransitionsToSMVNames, actionNamesToTransitionNames, properties)
-        const expected = '-- AG (close) -> AX A [ !(finish) U (reveal)]\nCTLSPEC AG (((NuInteraction) = (NuI29)) -> AX A [ !((NuInteraction) = (NuI8)) U ((NuInteraction) = (NuI31))])\n\n'
+        const expected = '-- AG (start) -> AX A [ !(withdraw) U (finish)]\nCTLSPEC AG (((NuInteraction) = (NuI1)) -> AX A [ !((NuInteraction) = (NuI3)) U ((NuInteraction) = (NuI19))])\n\n'
 
         expect(generatedProperties).to.eql(expected)
       })
     })
     context('Fourth Template case', function () {
       // Type 4: <action> will eventually happen after <action> happens
-      it('Finish will eventually happen after reveal happens', function () {
-        const properties = [[['finish'], ['reveal']]]
+      it('Finish will eventually happen after start happens', function () {
+        const properties = [[['finish'], ['start']]]
 
         const generatedProperties = CTL.generateFourthTemplateProperties(bipTransitionsToSMVNames, actionNamesToTransitionNames, properties)
-        const expected = '-- AG ((reveal) -> AF (finish))\nCTLSPEC AG (((NuInteraction) = (NuI31)) -> AF ((NuInteraction) = (NuI8)))\n\n'
+        const expected = '-- AG ((start) -> AF (finish))\nCTLSPEC AG (((NuInteraction) = (NuI1)) -> AF ((NuInteraction) = (NuI19)))\n\n'
 
         expect(generatedProperties).to.eql(expected)
       })
@@ -66,20 +66,19 @@ describe('CTLPropertiesForBlindAuction', function () {
     context('First Template case', function () {
       // close#finish
       // Type 1: <action> cannot happen after <action>"
-      it('Close cannot happen after finish', function () {
-        const properties = [[['close'], ['finish']]]
+      it('bid cannot happen after finish', function () {
+        const properties = [[['bid'], ['finish']]]
 
         const generatedProperties = CTL.generateFirstTemplatePropertiesTxt(properties)
-        const expected = '(close) can happen only after (finish)\n'
+        const expected = '(bid) cannot happen after (finish)\n'
 
         expect(generatedProperties).to.eql(expected)
       })
-      // close#finish;cancelRB|cancelABB#finish
-      it('Close cannot happen after finish and cancelRB or cancelABB cannot happen after finish', function () {
-        const properties = [[['close'], ['finish']], [['cancelRB', 'cancelABB'], ['finish']]]
+      it('start or bid cannot happen after finish', function () {
+        const properties = [[['start', 'bid'], ['finish']]]
 
         const generatedProperties = CTL.generateFirstTemplatePropertiesTxt(properties)
-        const expected = '(close) can happen only after (finish)\n(cancelRB|cancelABB) can happen only after (finish)\n'
+        const expected = '(start|bid) cannot happen after (finish)\n'
 
         expect(generatedProperties).to.eql(expected)
       })
@@ -87,32 +86,32 @@ describe('CTLPropertiesForBlindAuction', function () {
     context('Second Template case', function () {
       // finish#reveal
       // Type 2: <action> can happen only after <action>
-      it('Finish can happen only after reveal', function () {
-        const properties = [[['finish'], ['reveal']]]
+      it('withdraw can happen only after finish', function () {
+        const properties = [[['withdraw'], ['finish']]]
 
         const generatedProperties = CTL.generateSecondTemplatePropertiesTxt(properties)
-        const expected = '(finish) can happen only after (reveal)\n'
+        const expected = '(withdraw) can happen only after (finish)\n'
 
         expect(generatedProperties).to.eql(expected)
       })
     })
     context('Third Template case', function () {
-      // close#finish#reveal
+      // start#withdraw#finish
       // Type 3: If <action> happens, <action> can happen only after <action> happens
-      it('If close happens, finish can happen only after reveal happens', function () {
-        const properties = [[['close'], ['finish'], ['reveal']]]
+      it('If start happens, withdraw can happen only after finish happens', function () {
+        const properties = [[['start'], ['withdraw'], ['finish']]]
 
         const generatedProperties = CTL.generateThirdTemplatePropertiesTxt(properties)
-        const expected = 'If (close) happens, (finish) can happen only after (reveal) happens\n'
+        const expected = 'If (start) happens, (withdraw) can happen only after (finish) happens\n'
 
         expect(generatedProperties).to.eql(expected)
       })
     })
     context('Fourth Template case', function () {
-      // finish#reveal
+      // finish#start
       // Type 4: <action> will eventually happen after <action> happens
-      it('Finish will eventually happen after reveal happens', function () {
-        const properties = [[['finish'], ['reveal']]]
+      it('finish will eventually happen after finish', function () {
+        const properties = [[['finish'], ['start']]]
 
         const generatedProperties = CTL.generateFourthTemplatePropertiesTxt(properties)
         const expected = '(finish) will eventually happen after (finish)\n'
@@ -124,47 +123,48 @@ describe('CTLPropertiesForBlindAuction', function () {
   context('#generatingCTLFairnessProperties', function () {
     context('Second Template case', function () {
       // Type 2: <action> can happen only after <action>
-      it('Finish can happen only after reveal', function () {
-        const properties = [[['finish'], ['reveal']]]
+      it('withdraw can happen only after finish', function () {
+        const properties = [[['withdraw'], ['finish']]]
 
         const generatedProperties = CTL.generateSecondTemplateFairnessProperties(bipTransitionsToSMVNames, actionNamesToTransitionNames, properties)
-        const expected = '(NuInteraction) = (NuI8)|'
+        const expected = '(NuInteraction) = (NuI3)|'
 
         expect(generatedProperties).to.eql(expected)
       })
     })
     context('Third Template case', function () {
-      // close#finish#reveal
+      // start#withdraw#finish
       // Type 3: If <action> happens, <action> can happen only after <action> happens
-      it('If close happens, finish can happen only after reveal happens', function () {
-        const properties = [[['close'], ['finish'], ['reveal']]]
+      it('If start happens, withdraw can happen only after finish happens', function () {
+        const properties = [[['start'], ['withdraw'], ['finish']]]
 
         const generatedProperties = CTL.generateThirdTemplateFairnessProperties(bipTransitionsToSMVNames, actionNamesToTransitionNames, properties)
-        const expected = '(NuInteraction) = (NuI31)|'
+        const expected = '(NuInteraction) = (NuI19)|'
 
         expect(generatedProperties).to.eql(expected)
       })
     })
-    context('#parsingProperties', function () {
-      const blindAuctionModel = { name: 'BlindAuction', states: ['C', 'ABB', 'RB', 'F', 'bid', 's5_1', 'cancelABB', 'cancelRB', 'finish', 'withdraw', 'withdraw_no_revert', 's11_1', 's12_T', 's13_1', 's14_T', 's14_F', 'unbid', 'unbid_no_revert', 's18_1', 's19_T', 's20_1', 'close', 'reveal', 's23_I', 's23_C', 's23_B', 's26_1', 's26_2', 's28_T', 's29_1'], transitions: [{ name: 'abid_guard', actionName: 'bid', src: 'ABB', dst: 'bid', guards: '', input: '    bytes32 blindedBid', output: '', statements: '', tags: 'payable' }, { name: 'a1', actionName: 'bid.bids[msg.sender].push(Bid({\n       blindedBid: blindedBid,\n       deposit: msg.value\n   }));', src: 'bid', dst: 's5_1', guards: '', input: '', output: '', statements: 'bids[msg.sender].push(Bid({\n       blindedBid: blindedBid,\n       deposit: msg.value\n   }));', tags: '' }, { name: 'a2', actionName: 'bid.pendingReturns[msg.sender] += msg.value;', src: 's5_1', dst: 'ABB', guards: '', input: '', output: '', statements: 'pendingReturns[msg.sender] += msg.value;', tags: '' }, { name: 'acancelABB_guard', actionName: 'cancelABB', src: 'ABB', dst: 'cancelABB', guards: '', input: '', output: '', statements: '', tags: '' }, { name: 'a4', src: 'cancelABB', dst: 'C', guards: '', input: '', output: '', statements: '', tags: '' }, { name: 'acancelRB_guard', actionName: 'cancelRB', src: 'RB', dst: 'cancelRB', guards: '', input: '', output: '', statements: '', tags: '' }, { name: 'a6', src: 'cancelRB', dst: 'C', guards: '', input: '', output: '', statements: '', tags: '' }, { name: 'afinish_guard', actionName: 'finish', src: 'RB', dst: 'finish', guards: '  now >= creationTime + 10 days', input: '', output: '', statements: '', tags: '' }, { name: 'a8', src: 'finish', dst: 'F', guards: '', input: '', output: '', statements: '', tags: '' }, { name: 'awithdraw_guard', actionName: 'withdraw', src: 'F', dst: 'withdraw', guards: '', input: '', output: '', statements: '', tags: '' }, { name: 'awithdraw_revert', src: 'withdraw', dst: 'F', guards: 'revert', input: '', output: '', statements: '', tags: '' }, { name: 'awithdraw_no_revert', src: 'withdraw', dst: 'withdraw_no_revert', guards: 'no revert', input: '', output: '', statements: '', tags: '' }, { name: 'a12', actionName: 'withdraw.uint amount = pendingReturns[msg.sender];', src: 'withdraw_no_revert', dst: 's11_1', guards: '', input: '', output: '', statements: 'uint amount = pendingReturns[msg.sender];', tags: '' }, { name: 'a13', src: 's11_1', dst: 's12_T', guards: 'amount > 0', input: '', output: '', statements: '', tags: '' }, { name: 'a14', src: 's12_T', dst: 's14_T', guards: 'msg.sender!= highestBidder', input: '', output: '', statements: '', tags: '' }, { name: 'a15', actionName: 'withdraw.msg.sender.transfer(amount);', src: 's14_T', dst: 's13_1', guards: '', input: '', output: '', statements: 'msg.sender.transfer(amount);', tags: '' }, { name: 'a16', src: 's12_T', dst: 's14_F', guards: '!(msg.sender!= highestBidder)', input: '', output: '', statements: '', tags: '' }, { name: 'a17', actionName: 'withdraw.msg.sender.transfer(amount - highestBid);', src: 's14_F', dst: 's13_1', guards: '', input: '', output: '', statements: 'msg.sender.transfer(amount - highestBid);', tags: '' }, { name: 'a18', actionName: 'withdraw.pendingReturns[msg.sender] = 0;', src: 's13_1', dst: 'F', guards: '', input: '', output: '', statements: 'pendingReturns[msg.sender] = 0;', tags: '' }, { name: 'a19', src: 's11_1', dst: 'F', guards: '!(amount > 0)', input: '', output: '', statements: '', tags: '' }, { name: 'aunbid_guard', actionName: 'unbid', src: 'C', dst: 'unbid', guards: '', input: '', output: '', statements: '', tags: '' }, { name: 'aunbid_revert', src: 'unbid', dst: 'C', guards: 'revert', input: '', output: '', statements: '', tags: '' }, { name: 'aunbid_no_revert', src: 'unbid', dst: 'unbid_no_revert', guards: 'no revert', input: '', output: '', statements: '', tags: '' }, { name: 'a23', actionName: 'unbid.uint amount = pendingReturns[msg.sender];', src: 'unbid_no_revert', dst: 's18_1', guards: '', input: '', output: '', statements: 'uint amount = pendingReturns[msg.sender];', tags: '' }, { name: 'a24', src: 's18_1', dst: 's19_T', guards: 'amount > 0', input: '', output: '', statements: '', tags: '' }, { name: 'a25', actionName: 'unbid.msg.sender.transfer(amount);', src: 's19_T', dst: 's20_1', guards: '', input: '', output: '', statements: 'msg.sender.transfer(amount);', tags: '' }, { name: 'a26', actionName: 'unbid.pendingReturns[msg.sender] = 0;', src: 's20_1', dst: 'C', guards: '', input: '', output: '', statements: 'pendingReturns[msg.sender] = 0;', tags: '' }, { name: 'a27', src: 's18_1', dst: 'C', guards: '!(amount > 0)', input: '', output: '', statements: '', tags: '' }, { name: 'aclose_guard', actionName: 'close', src: 'ABB', dst: 'close', guards: 'now > creationTime + 5 days', input: '', output: '', statements: '', tags: '' }, { name: 'a29', src: 'close', dst: 'RB', guards: '', input: '', output: '', statements: '', tags: '' }, { name: 'areveal_guard', actionName: 'reveal', src: 'RB', dst: 'reveal', guards: 'values.length == secrets.length', input: '  uint[] values, bytes32[] secrets', output: '', statements: '', tags: '' }, { name: 'a31', actionName: 'reveal.uint i = 0;', src: 'reveal', dst: 's23_I', guards: '', input: '', output: '', statements: 'uint i = 0;', tags: '' }, { name: 'a32', src: 's23_I', dst: 'RB', guards: '!(i < (bids[msg.sender].length < values.length ? \n        bids[msg.sender].length : values.length))', input: '', output: '', statements: '', tags: '' }, { name: 'a33', src: 's23_I', dst: 's23_C', guards: 'i < (bids[msg.sender].length < values.length ? \n        bids[msg.sender].length : values.length)', input: '', output: '', statements: '', tags: '' }, { name: 'a34', actionName: 'reveal.var bid = bids[msg.sender][i];', src: 's23_C', dst: 's26_1', guards: '', input: '', output: '', statements: 'var bid = bids[msg.sender][i];', tags: '' }, { name: 'a35', actionName: 'reveal.var (value, secret) = (values[i], secrets[i]);', src: 's26_1', dst: 's26_2', guards: '', input: '', output: '', statements: 'var (value, secret) = (values[i], secrets[i]);', tags: '' }, { name: 'a36', src: 's26_2', dst: 's28_T', guards: 'bid.blindedBid == keccak256(value, secret) && \n              bid.deposit >= value && value > highestBid', input: '', output: '', statements: '', tags: '' }, { name: 'a37', actionName: 'reveal.highestBid = value;', src: 's28_T', dst: 's29_1', guards: '', input: '', output: '', statements: 'highestBid = value;', tags: '' }, { name: 'a38', actionName: 'reveal.highestBidder = msg.sender;', src: 's29_1', dst: 's23_B', guards: '', input: '', output: '', statements: 'highestBidder = msg.sender;', tags: '' }, { name: 'a39', src: 's26_2', dst: 's23_B', guards: '!(bid.blindedBid == keccak256(value, secret) && \n              bid.deposit >= value && value > highestBid)', input: '', output: '', statements: '', tags: '' }, { name: 'a40', actionName: 'reveal.i++;', src: 's23_B', dst: 's23_I', guards: '', input: '', output: '', statements: 'i++;', tags: '' }], initialState: 'ABB', finalStates: ['C', 'F'] }
+  })
+  
+  context('#parsingProperties', function () {
+    const auctionModel = { name: 'auction', states: [ 'AB', 'F', 'C', 'start', 'withdraw', 's5_1', 's5_2', 'bid', 's8_1', 's8_2', 's8_3', 's8_4', 's8_5', 's8_6', 's8_7', 's15_T', 's16_1', 'finish', 's18_1', 'create', 's20_1' ], transitions: [ { name: 'astart_guard', actionName: 'start', src: 'C', dst: 'start', guards: 'exists<Auction<Currency>>(auction_addr)', input: 'auction_addr: address', output: '', statements: '', tags: '' }, { name: 'a1', src: 'start', dst: 'AB', guards: '', input: '', output: '', statements: '', tags: '' }, { name: 'awithdraw_guard', actionName: 'withdraw', src: 'F', dst: 'withdraw', guards: '', input: 'auction_owner_addr: address, bidder_addr: address', output: '', statements: '', tags: '' }, { name: 'a3', actionName: 'withdraw.let Auction {     \n\tbid,     \n    bidder: _,     \n    start_at: _, } = move_from<Auction<Currency>>(auction_owner_addr);', src: 'withdraw', dst: 's5_1', guards: '', input: '', output: '', statements: 'let Auction {     \n\tbid,     \n    bidder: _,     \n    start_at: _, } = move_from<Auction<Currency>>(auction_owner_addr);', tags: '' }, { name: 'a4', actionName: 'withdraw.let bid_amount = Diem::value(&bid);', src: 's5_1', dst: 's5_2', guards: '', input: '', output: '', statements: 'let bid_amount = Diem::value(&bid);', tags: '' }, { name: 'a5', actionName: 'withdraw.DiemAccount::deposit(bidder_addr, auction_owner_addr, bid, b"", b"");', src: 's5_2', dst: 'F', guards: '', input: '', output: '', statements: 'DiemAccount::deposit(bidder_addr, auction_owner_addr, bid, b"", b"");', tags: '' }, { name: 'abid_guard', actionName: 'bid', src: 'AB', dst: 'bid', guards: '', input: 'bidder_addr: address, auction_owner_addr: address, bid: Diem<Currency>', output: '', statements: '', tags: '' }, { name: 'a7', actionName: 'bid.let auction = borrow_global_mut<Auction<Currency>>(auction_owner_addr);', src: 'bid', dst: 's8_1', guards: '', input: '', output: '', statements: 'let auction = borrow_global_mut<Auction<Currency>>(auction_owner_addr);', tags: '' }, { name: 'a8', actionName: 'bid.let bid_amt = Diem::value(&bid);', src: 's8_1', dst: 's8_2', guards: '', input: '', output: '', statements: 'let bid_amt = Diem::value(&bid);', tags: '' }, { name: 'a9', actionName: 'bid.let max_bid = Diem::value(&auction.max_bid);', src: 's8_2', dst: 's8_3', guards: '', input: '', output: '', statements: 'let max_bid = Diem::value(&auction.max_bid);', tags: '' }, { name: 'a10', actionName: 'bid.assert(bid_amt > max_bid, 1);', src: 's8_3', dst: 's8_4', guards: '', input: '', output: '', statements: 'assert(bid_amt > max_bid, 1);', tags: '' }, { name: 'a11', actionName: 'bid.assert(bidder_addr != auction.bidder, 1);', src: 's8_4', dst: 's8_5', guards: '', input: '', output: '', statements: 'assert(bidder_addr != auction.bidder, 1);', tags: '' }, { name: 'a12', src: 's8_5', dst: 's15_T', guards: 'max_bid > 0', input: '', output: '', statements: '', tags: '' }, { name: 'a13', actionName: 'bid.let to_send_back = Diem::withdraw(&mut auction.max_bid, max_bid);', src: 's15_T', dst: 's16_1', guards: '', input: '', output: '', statements: 'let to_send_back = Diem::withdraw(&mut auction.max_bid, max_bid);', tags: '' }, { name: 'a14', actionName: 'bid.DiemAccount::deposit<Currency>(bidder_addr, auction.bidder, to_send_back, b"", b"");', src: 's16_1', dst: 's8_6', guards: '', input: '', output: '', statements: 'DiemAccount::deposit<Currency>(bidder_addr, auction.bidder, to_send_back, b"", b"");', tags: '' }, { name: 'a15', src: 's8_5', dst: 's8_6', guards: '!(max_bid > 0)', input: '', output: '', statements: '', tags: '' }, { name: 'a16', actionName: 'bid.Diem::deposit(&mut auction.max_bid, bid);', src: 's8_6', dst: 's8_7', guards: '', input: '', output: '', statements: 'Diem::deposit(&mut auction.max_bid, bid);', tags: '' }, { name: 'a17', actionName: 'bid.*auction.bidder = bidder_addr;', src: 's8_7', dst: 'AB', guards: '', input: '', output: '', statements: '*auction.bidder = bidder_addr;', tags: '' }, { name: 'afinish_guard', actionName: 'finish', src: 'AB', dst: 'finish', guards: '', input: 'auction_owner: address', output: '', statements: '', tags: '' }, { name: 'a19', actionName: 'finish.let auction = borrow_global_mut<Auction<Currency>>(auction_owner_addr);', src: 'finish', dst: 's18_1', guards: '', input: '', output: '', statements: 'let auction = borrow_global_mut<Auction<Currency>>(auction_owner_addr);', tags: '' }, { name: 'a20', actionName: 'finish.assert(auction.auction_start + 432000 == DiemTimestamp::now_seconds());', src: 's18_1', dst: 'F', guards: '', input: '', output: '', statements: 'assert(auction.auction_start + 432000 == DiemTimestamp::now_seconds());', tags: '' }, { name: 'acreate_guard', actionName: 'create', src: 'C', dst: 'create', guards: '', input: 'auction_owner: &signer', output: '', statements: '', tags: '' }, { name: 'a22', actionName: 'create.let auction_owner_addr = Signer::address_of(auction_owner);', src: 'create', dst: 's20_1', guards: '', input: '', output: '', statements: 'let auction_owner_addr = Signer::address_of(auction_owner);', tags: '' }, { name: 'a23', actionName: 'create.move_to<Auction<Currency>>(auction_owner, T {     \n\t\t\t\t\t\t\t\t\t\t\t\tDiem::zero<Currency>(),     \n                                                auction_owner_addr,     \n                                                DiemTimestamp::now_seconds() \n                                             }\n                           );', src: 's20_1', dst: 'C', guards: '', input: '', output: '', statements: 'move_to<Auction<Currency>>(auction_owner, T {     \n\t\t\t\t\t\t\t\t\t\t\t\tDiem::zero<Currency>(),     \n                                                auction_owner_addr,     \n                                                DiemTimestamp::now_seconds() \n                                             }\n                           );', tags: '' } ], initialState: 'C', finalStates: [ 'F' ] }
       context('Parsing with template 1', function () {
         it('1 statement parsing', function () {
-          const input = 'close#finish'
+          const input = 'bid#finish'
 
-          const parsedProperties = CTL.parseProperties(blindAuctionModel, input)
-          const expected = [[['close'], ['finish']]]
+          const parsedProperties = CTL.parseProperties(auctionModel, input)
+          const expected = [[['bid'], ['finish']]]
 
           expect(parsedProperties).to.eql(expected)
         })
         it('2 statement parsing', function () {
-          const input = 'close#finish;cancelRB|cancelABB#finish'
+          const input = 'start|bid#finish'
 
-          const parsedProperties = CTL.parseProperties(blindAuctionModel, input)
-          const expected = [[['close'], ['finish']], [['cancelRB', 'cancelABB'], ['finish']]]
+          const parsedProperties = CTL.parseProperties(auctionModel, input)
+          const expected = [[['start', 'bid'], ['finish']]]
 
           expect(parsedProperties).to.eql(expected)
         })
       })
-    })
   })
 })
