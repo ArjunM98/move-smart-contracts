@@ -10,7 +10,8 @@ module.exports = {
     'plugin:json/recommended'
   ],
   ignorePatterns: [
-    '/src/visualizers/panels/ReactVisualizerBundles'
+    'src/visualizers/panels/MoveCodeEditor/reactViz.bundle.js',
+    'src/visualizers/panels/ReactVisualizerBundles/'
   ],
   parserOptions: {
     ecmaVersion: 12
