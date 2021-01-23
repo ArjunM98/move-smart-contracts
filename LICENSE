@@ -599,7 +599,7 @@ esprima@4.0.1
 
 
 // The packages under the Apache 2.0 License follow:
-Copyright 2019 material-motion
+Copyright 2019 material-motion // indefinite-observable-js
 
 detect-libc@1.0.3
 tunnel-agent@0.6.0
