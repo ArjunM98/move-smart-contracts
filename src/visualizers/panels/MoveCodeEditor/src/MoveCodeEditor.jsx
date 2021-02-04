@@ -44,10 +44,10 @@ const MoveCodeEditor = ({ gmeClient, initialState }) => {
 
     const handleShowSavedCode = () => {
         const contract = gmeClient.getNode(initialState.activeNode);
-        const generatedCode = contract.getAttribute("customMoveCode");
+        const savedCode = contract.getAttribute("customMoveCode");
 
-        if (generatedCode) {
-            setCode(generatedCode);
+        if (savedCode) {
+            setCode(savedCode);
         } else {
             setCode("// No saved code found, write your own code and save it!");
         }
