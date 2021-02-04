@@ -85,6 +85,10 @@ define([
             'See messages for details.')
         }
 
+        // Persist generated code files to contracts themselves as attributes
+        MoveCodeGenerator.saveOnModel(self, nodes, result.files)
+
+        // Now persist them as files
         artifact = self.blobClient.createArtifact('MoveCodeGenerator')
         return artifact.addFiles(result.files)
       })
@@ -136,6 +140,18 @@ define([
         }
       })
       .nodeify(callback)
+  }
+
+  MoveCodeGenerator.saveOnModel = function (self, nodes, files) {
+    const contractPaths = MoveCodeGenerator.prototype.getContractPaths.call(self, nodes)
+
+    for (const contract of contractPaths) {
+      const fileName = self.core.getAttribute(nodes[contract], 'name') + '.Move'
+      self.core.setAttribute(nodes[contract], 'generatedMoveCode', files[fileName])
+      self.core.setAttributeMeta(nodes[contract], 'generatedMoveCode', { type: 'string', multiline: true })
+    }
+
+    self.save('Updating generatedMoveCode attribute on all affected nodes')
   }
 
   MoveCodeGenerator.prototype.getContractPaths = function (nodes) {
