@@ -61,7 +61,7 @@ const MoveCodeEditor = ({ gmeClient, initialState }) => {
                 <p>
                     The code editor displays the current Move code associated with this contract.
                     Custom code can be written and saved to this contract through the "Save" button.
-                    You can also run the MoveCodeGenerator plugin to autogenerate code for this contract.
+                    If an FSM is defined for this contract, then you can also run the MoveCodeGenerator plugin to autogenerate Move code for it.
                     This generated code can be viewed in the editor through the "View Generated Code" button.
                     <b> The generated code shown is based on the LAST successful plugin run. </b>
                     Saved custom code can be viewed in the editor through the "View Saved Code" button.
