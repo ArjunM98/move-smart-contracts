@@ -19,7 +19,6 @@ ReactDOM.render(
         gmeClient={window.WebGMEGlobal.WebGMEReactPanels[VISUALIZER_INSTANCE_ID].client}
         stateMediator={window.WebGMEGlobal.WebGMEReactPanels[VISUALIZER_INSTANCE_ID].stateMediator}
         initialState={window.WebGMEGlobal.WebGMEReactPanels[VISUALIZER_INSTANCE_ID].initialState}
-        otherPanel={window.WebGMEGlobal}
     />,
     document.getElementById(VISUALIZER_INSTANCE_ID),
 );

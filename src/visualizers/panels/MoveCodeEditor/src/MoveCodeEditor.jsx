@@ -3,7 +3,7 @@ import { Button, Container } from '@material-ui/core';
 import Editor from '@monaco-editor/react';
 // import GraphEditor from 'webgme-react-components/src/components/GraphEditor';
 
-const MoveCodeEditor = ({ gmeClient, initialState, otherPanel }) => {
+const MoveCodeEditor = ({ gmeClient, initialState }) => {
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -182,21 +182,21 @@ const MoveCodeEditor = ({ gmeClient, initialState, otherPanel }) => {
         const Q = require('q');
 
         // Printing the names of the visualizers
-        const VisualizersJSON = otherPanel.allVisualizers;
+        const VisualizersJSON = window.WebGMEGlobal.allVisualizers;
         for (i = 0; i < VisualizersJSON.length; i += 1) {
             console.log(i + " : " + VisualizersJSON[i].id + "\n");
         }
-        
+
         // TODO dont forget to remove the hardcoded value
         // console.log(otherPanel.Client.getAllNodes());
         // const node = window.WebGMEGlobal.Client.getNode("/m/A");
-        const node = window.WebGMEGlobal.InterpreterManager._client.getAllMetaNodes()[6]._state.nodes["/9/b"];
+        // const node = window.WebGMEGlobal.InterpreterManager._client.getAllMetaNodes()[6]._state.nodes["/9/b"];
         // console.log("node = "+ node.getId());
 
         // var initialState = window.WebGMEGlobal.InterpreterManager._client.getAllMetaNodes()[6]._state.nodes['/9/b/ykY'];
-        const initialState = "/9/b/ykY";
+        // const initialState = "/9/b/ykY";
 
-        var storage = [];
+        // var storage = [];
 
         // loop through the children
         // if a children is a transition (if statements key exists)
@@ -207,56 +207,131 @@ const MoveCodeEditor = ({ gmeClient, initialState, otherPanel }) => {
         //     }
         // })  
 
-        Object.keys(window.WebGMEGlobal.InterpreterManager._client.getAllMetaNodes()[6]._state.nodes).forEach( (key) => {
-            // console.log("Key: "+ key);
-            // console.log(window.WebGMEGlobal.InterpreterManager._client.getAllMetaNodes()[6]._state.nodes[key].node)
-            console.log(key + " and type= " + typeof(key))
-            if (key.includes("/9/b/") && (key !== "/9/b" && key !== "/9/b/ykY")){
-                // window.WebGMEGlobal.InterpreterManager._client.deleteNode(key);
-                storage.push(key);
-                // console.log("deleted: "+ key);
-            }
-        })
+        // console.log()
+
+        // Object.keys(window.WebGMEGlobal.InterpreterManager._client.getAllMetaNodes()[0]._state.nodes).forEach( (key) => {
+        //     // console.log("Key: "+ key);
+        //     // console.log(window.WebGMEGlobal.InterpreterManager._client.getAllMetaNodes()[0]._state.nodes[key].node)
+        //     console.log(key + " and type= " + typeof(key))
+        //     if (key.includes("/9/b/") && (key !== "/9/b" && key !== "/9/b/ykY")){
+        //         // window.WebGMEGlobal.InterpreterManager._client.deleteNode(key);
+        //         // window.WebGMEGlobal.Client.deleteNode(key)
+        //         storage.push(key);
+        //         // console.log("deleted: "+ key);
+        //     }
+        // })
+
+
+        // window.WebGMEGlobal.Client.getNode("/9/b")._state.nodes["/9/b"].node.childrenRelids.forEach((key) => {
+        //     // console.log("Key: "+ key);
+        //     // console.log(window.WebGMEGlobal.InterpreterManager._client.getAllMetaNodes()[6]._state.nodes[key].node)
+        //     //     // window.WebGMEGlobal.InterpreterManager._client.deleteNode(key);
+        //     //     storage.push(key);
+        //     //     // console.log("deleted: "+ key);
+        //     // }
+            
+        //     console.log("Trying to delete: " + "/9/b/"+key);
+        //     if (window.WebGMEGlobal.Client.getNode("/9/b")._state.nodes["/9/b/"+key].node.data.atr.hasOwnProperty('statements')){
+        //         window.WebGMEGlobal.Client.deletePointer("/9/b/"+key, window.WebGMEGlobal.Client.getNode("/9/b")._state.nodes["/9/b/"+key].node.data.atr.name);
+        //     } else {
+        //         // window.WebGMEGlobal.Client.deleteNode("/9/b/"+key);
+        //         console.log("Skipping the nodes");
+        //     }
+        // })
+
+        // window.WebGMEGlobal.Client.getNode("/9/b")._state.nodes["/9/b"].node.childrenRelids.forEach((key) => {
+        //     // console.log("Key: "+ key);
+        //     // console.log(window.WebGMEGlobal.InterpreterManager._client.getAllMetaNodes()[6]._state.nodes[key].node)
+        //     //     // window.WebGMEGlobal.InterpreterManager._client.deleteNode(key);
+        //     //     storage.push(key);
+        //     //     // console.log("deleted: "+ key);
+        //     // }
+            
+        //     console.log("Trying to delete: " + "/9/b/"+key);
+        //     if (window.WebGMEGlobal.Client.getNode("/9/b")._state.nodes["/9/b/"+key].node.data.atr.hasOwnProperty('statements')){
+        //         window.WebGMEGlobal.Client.deletePointer("/9/b/"+key, window.WebGMEGlobal.Client.getNode("/9/b")._state.nodes["/9/b/"+key].node.data.atr.name);
+        //     } else {
+        //         window.WebGMEGlobal.Client.deleteNode("/9/b/"+key);
+        //         // console.log("Skipping the nodes");
+        //     }
+        // })
+        
 
        
-        console.log(storage);
+        // console.log(storage);
 
-        storage.forEach((a) => {
-            window.WebGMEGlobal.InterpreterManager._client.deleteNode(a);
-        })
-
-
-        window.location.href  = "http://localhost:8888/?project=guest%2B123q&branch=master&node=%2F9%2Fb&visualizer=ModelEditor&tab=0&layout=DefaultLayout&selection=";
+        // storage.forEach((a) => {
+        //     // window.WebGMEGlobal.InterpreterManager._client.deleteNode(a);
+        //     window.WebGMEGlobal.Client.deleteNode(a);
+        // })
 
         // window.WebGMEGlobal.InterpreterManager._client.startTransaction();
 
+        // var del = window.WebGMEGlobal.Client.getNode(["/9/b"])._state.nodes["/9/b"].node.childrenRelids
+        // while (del != []){
+        //     del.forEach((a) => {
+        //         window.WebGMEGlobal.Client.deleteNode("/9/b/"+a);
+        //     });
+        // }
+        // del.forEach((a) => {
+        //     window.WebGMEGlobal.Client.deleteNode("/9/b/"+a);
+        // });
+
+        // window.WebGMEGlobal.WebGMEReactPanels[
+
+        var del = gmeClient.getNode(initialState.activeNode).getChildrenIds();
+
+        // for (var i = 0; i < del.length; i++){
+        //     if (!del[i].startsWith("/9/b")){
+        //         del[i] = "/9/b/"+del[i];
+        //     }
+        // }
+
+        console.log("del = " + del);
+
+        // window.WebGMEGlobal.WebGMEReactPanels[VISUALIZER_INSTANCE_ID].client
+
+        // window.WebGMEGlobal.Client.getNode(["/9/b"])._state.nodes["/9/b"].node.childrenRelids.forEach(item => {
+        //     item = "/9/b/"+item;
+        // });
+    
+
+        // remember to change the definition of /9/b
+        // remember to change its attributes specifically: name, imports, and resources
+        
+        gmeClient.startTransaction();
+
+        // window.WebGMEGlobal.Client.deleteNodes(del);
+
+        gmeClient.deleteNodes(del);
+
+        //Creation
         // window.WebGMEGlobal.InterpreterManager._client.setAttribute('/9/b', 'definitions', 'none');
         // otherPanel.Client.setAttribute(node.getId(), 'definitions', "whatever");
         // window.WebGMEGlobal.InterpreterManager._client.setAttribute("/9/b", 'definitions', "best");
-        // var initialState =  window.WebGMEGlobal.InterpreterManager._client.createChild({parentId: '/9/b', baseId: '/m/z'});
+        var state =  gmeClient.createChild({parentId: initialState.activeNode, baseId: '/m/9'});
         
-        // var deferred = Q.defer();
-        // var self = window.WebGMEGlobal.InterpreterManager, 
-        //     all_promises = [];
-        // ["name1", "name2"].forEach(fn => {
+        var deferred = Q.defer();
+        var all_promises = [];
+        ["name1", "name2"].forEach(fn => {
 
-        //     var transition = self._client.createChild({ parentId: '/9/b', baseId: '/m/A' });
+            var transition = gmeClient.createChild({ parentId: initialState.activeNode, baseId: '/m/A' });
 
-        //     self._client.setAttribute(transition, 'name', fn);
-        //     self._client.setAttribute(transition, 'statements', fn);
-        //     self._client.setAttribute(transition, 'input', fn);
-        //     self._client.setAttribute(transition, 'output', fn);
-        //     self._client.setAttribute(transition, 'tags', fn);
-        //     self._client.setPointer(transition, 'src', initialState);
-        //     self._client.setPointer(transition, 'dst', initialState);
-        //     // if (fn.length > 0) {
-        //     //     self._client.setAttribute(transition, 'guards', fn.modifiers.join(','));
-        //     // }
-        //     deferred.resolve(fn);
-        //     all_promises.push(deferred.promise);
-        // });
-        // window.WebGMEGlobal.InterpreterManager._client.completeTransaction();
-        // return Q.all(all_promises);
+            gmeClient.setAttribute(transition, 'name', fn);
+            gmeClient.setAttribute(transition, 'statements', fn);
+            gmeClient.setAttribute(transition, 'input', fn);
+            gmeClient.setAttribute(transition, 'output', fn);
+            gmeClient.setAttribute(transition, 'tags', fn);
+            gmeClient.setPointer(transition, 'src', state);
+            gmeClient.setPointer(transition, 'dst', state);
+            // if (fn.length > 0) {
+            //     self._client.setAttribute(transition, 'guards', fn.modifiers.join(','));
+            // }
+            deferred.resolve(fn);
+            all_promises.push(deferred.promise);
+        });
+        gmeClient.completeTransaction();
+        return Q.all(all_promises);
     }
 
     const handleGenerateFSM = () => {
