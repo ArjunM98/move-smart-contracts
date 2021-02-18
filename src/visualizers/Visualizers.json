@@ -8,8 +8,9 @@
   {
     "id": "ModelEditor",
     "title": "Model Editor",
-    "panel": "js/Panels/ModelEditor/ModelEditorPanel",
-    "DEBUG_ONLY": false
+    "panel": "panels/ModelEditor/ModelEditorPanel",
+    "DEBUG_ONLY": false,
+    "default": true
   },
   {
     "id": "VerificationProperties",

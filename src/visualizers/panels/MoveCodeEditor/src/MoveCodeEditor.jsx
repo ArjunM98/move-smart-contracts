@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Container } from '@material-ui/core';
 import Editor from '@monaco-editor/react';
-// import GraphEditor from 'webgme-react-components/src/components/GraphEditor';
 
 const MoveCodeEditor = ({ gmeClient, initialState }) => {
 
@@ -181,157 +180,88 @@ const MoveCodeEditor = ({ gmeClient, initialState }) => {
         console.log("Testing");
         const Q = require('q');
 
-        // Printing the names of the visualizers
-        const VisualizersJSON = window.WebGMEGlobal.allVisualizers;
-        for (i = 0; i < VisualizersJSON.length; i += 1) {
-            console.log(i + " : " + VisualizersJSON[i].id + "\n");
-        }
-
-        // TODO dont forget to remove the hardcoded value
-        // console.log(otherPanel.Client.getAllNodes());
-        // const node = window.WebGMEGlobal.Client.getNode("/m/A");
-        // const node = window.WebGMEGlobal.InterpreterManager._client.getAllMetaNodes()[6]._state.nodes["/9/b"];
-        // console.log("node = "+ node.getId());
-
-        // var initialState = window.WebGMEGlobal.InterpreterManager._client.getAllMetaNodes()[6]._state.nodes['/9/b/ykY'];
-        // const initialState = "/9/b/ykY";
-
-        // var storage = [];
-
-        // loop through the children
-        // if a children is a transition (if statements key exists)
-        // check source & destination and if its either node then delete the transition first then node
-        // Object.keys(window.WebGMEGlobal.InterpreterManager._client.getAllMetaNodes()[6]._state.nodes['/9/b/ykY'].node.parent.children).forEach((key1) => {
-        //     if ("statement" in window.WebGMEGlobal.InterpreterManager._client.getAllMetaNodes()[6]._state.nodes['/9/b/ykY'].node.parent.children[key1].data.atr){
-        //         window.WebGMEGlobal.InterpreterManager._client.deletePointer(key1);
-        //     }
-        // })  
-
-        // console.log()
-
-        // Object.keys(window.WebGMEGlobal.InterpreterManager._client.getAllMetaNodes()[0]._state.nodes).forEach( (key) => {
-        //     // console.log("Key: "+ key);
-        //     // console.log(window.WebGMEGlobal.InterpreterManager._client.getAllMetaNodes()[0]._state.nodes[key].node)
-        //     console.log(key + " and type= " + typeof(key))
-        //     if (key.includes("/9/b/") && (key !== "/9/b" && key !== "/9/b/ykY")){
-        //         // window.WebGMEGlobal.InterpreterManager._client.deleteNode(key);
-        //         // window.WebGMEGlobal.Client.deleteNode(key)
-        //         storage.push(key);
-        //         // console.log("deleted: "+ key);
-        //     }
-        // })
-
-
-        // window.WebGMEGlobal.Client.getNode("/9/b")._state.nodes["/9/b"].node.childrenRelids.forEach((key) => {
-        //     // console.log("Key: "+ key);
-        //     // console.log(window.WebGMEGlobal.InterpreterManager._client.getAllMetaNodes()[6]._state.nodes[key].node)
-        //     //     // window.WebGMEGlobal.InterpreterManager._client.deleteNode(key);
-        //     //     storage.push(key);
-        //     //     // console.log("deleted: "+ key);
-        //     // }
-            
-        //     console.log("Trying to delete: " + "/9/b/"+key);
-        //     if (window.WebGMEGlobal.Client.getNode("/9/b")._state.nodes["/9/b/"+key].node.data.atr.hasOwnProperty('statements')){
-        //         window.WebGMEGlobal.Client.deletePointer("/9/b/"+key, window.WebGMEGlobal.Client.getNode("/9/b")._state.nodes["/9/b/"+key].node.data.atr.name);
-        //     } else {
-        //         // window.WebGMEGlobal.Client.deleteNode("/9/b/"+key);
-        //         console.log("Skipping the nodes");
-        //     }
-        // })
-
-        // window.WebGMEGlobal.Client.getNode("/9/b")._state.nodes["/9/b"].node.childrenRelids.forEach((key) => {
-        //     // console.log("Key: "+ key);
-        //     // console.log(window.WebGMEGlobal.InterpreterManager._client.getAllMetaNodes()[6]._state.nodes[key].node)
-        //     //     // window.WebGMEGlobal.InterpreterManager._client.deleteNode(key);
-        //     //     storage.push(key);
-        //     //     // console.log("deleted: "+ key);
-        //     // }
-            
-        //     console.log("Trying to delete: " + "/9/b/"+key);
-        //     if (window.WebGMEGlobal.Client.getNode("/9/b")._state.nodes["/9/b/"+key].node.data.atr.hasOwnProperty('statements')){
-        //         window.WebGMEGlobal.Client.deletePointer("/9/b/"+key, window.WebGMEGlobal.Client.getNode("/9/b")._state.nodes["/9/b/"+key].node.data.atr.name);
-        //     } else {
-        //         window.WebGMEGlobal.Client.deleteNode("/9/b/"+key);
-        //         // console.log("Skipping the nodes");
-        //     }
-        // })
-        
-
-       
-        // console.log(storage);
-
-        // storage.forEach((a) => {
-        //     // window.WebGMEGlobal.InterpreterManager._client.deleteNode(a);
-        //     window.WebGMEGlobal.Client.deleteNode(a);
-        // })
-
-        // window.WebGMEGlobal.InterpreterManager._client.startTransaction();
-
-        // var del = window.WebGMEGlobal.Client.getNode(["/9/b"])._state.nodes["/9/b"].node.childrenRelids
-        // while (del != []){
-        //     del.forEach((a) => {
-        //         window.WebGMEGlobal.Client.deleteNode("/9/b/"+a);
-        //     });
-        // }
-        // del.forEach((a) => {
-        //     window.WebGMEGlobal.Client.deleteNode("/9/b/"+a);
-        // });
-
-        // window.WebGMEGlobal.WebGMEReactPanels[
-
         var del = gmeClient.getNode(initialState.activeNode).getChildrenIds();
-
-        // for (var i = 0; i < del.length; i++){
-        //     if (!del[i].startsWith("/9/b")){
-        //         del[i] = "/9/b/"+del[i];
-        //     }
-        // }
-
-        console.log("del = " + del);
-
-        // window.WebGMEGlobal.WebGMEReactPanels[VISUALIZER_INSTANCE_ID].client
-
-        // window.WebGMEGlobal.Client.getNode(["/9/b"])._state.nodes["/9/b"].node.childrenRelids.forEach(item => {
-        //     item = "/9/b/"+item;
-        // });
-    
-
-        // remember to change the definition of /9/b
-        // remember to change its attributes specifically: name, imports, and resources
+        console.log(del)
+        // WebGMEGlobal.State.registerActiveVisualizer('ModelEditor');
+        // WebGMEGlobal.State.registerActiveVisualizer('MoveCodeEditor');
+        // console.log("RELOADING");
+        // window.location.reload();
+        // return;
         
         gmeClient.startTransaction();
 
-        // window.WebGMEGlobal.Client.deleteNodes(del);
-
+        // Deletion of prev nodes
         gmeClient.deleteNodes(del);
 
-        //Creation
-        // window.WebGMEGlobal.InterpreterManager._client.setAttribute('/9/b', 'definitions', 'none');
-        // otherPanel.Client.setAttribute(node.getId(), 'definitions', "whatever");
-        // window.WebGMEGlobal.InterpreterManager._client.setAttribute("/9/b", 'definitions', "best");
-        var state =  gmeClient.createChild({parentId: initialState.activeNode, baseId: '/m/9'});
-        
+        var errored = false;
+
+        //Creation of state node with all transitions
+        var state = gmeClient.createChild({parentId: initialState.activeNode, baseId: '/m/9'});
+        try {
+            gmeClient.setAttribute(state, 'name', 'core');
+        } catch (err) {
+            console.log("error occurred please reload and continue");
+            errored = true;
+        }
         var deferred = Q.defer();
         var all_promises = [];
         ["name1", "name2"].forEach(fn => {
 
             var transition = gmeClient.createChild({ parentId: initialState.activeNode, baseId: '/m/A' });
-
-            gmeClient.setAttribute(transition, 'name', fn);
-            gmeClient.setAttribute(transition, 'statements', fn);
-            gmeClient.setAttribute(transition, 'input', fn);
-            gmeClient.setAttribute(transition, 'output', fn);
-            gmeClient.setAttribute(transition, 'tags', fn);
-            gmeClient.setPointer(transition, 'src', state);
-            gmeClient.setPointer(transition, 'dst', state);
+            
+            try {
+                gmeClient.setAttribute(transition, 'name', fn);
+                gmeClient.setAttribute(transition, 'statements', fn);
+                gmeClient.setAttribute(transition, 'input', fn);
+                gmeClient.setAttribute(transition, 'output', fn);
+                gmeClient.setAttribute(transition, 'tags', fn);
+                gmeClient.setPointer(transition, 'src', state);
+                gmeClient.setPointer(transition, 'dst', state);
+            } catch (err){
+                console.log("error occurred please reload and continue");
+                errored = true;
+            }
+            
             // if (fn.length > 0) {
-            //     self._client.setAttribute(transition, 'guards', fn.modifiers.join(','));
+            //     self._client.setAttributes(transition, 'guards', fn.modifiers.join(','));
             // }
             deferred.resolve(fn);
             all_promises.push(deferred.promise);
         });
-        gmeClient.completeTransaction();
-        return Q.all(all_promises);
+
+        //Creation of initial state node
+        var initState = gmeClient.createChild({parentId: initialState.activeNode, baseId: '/m/z'});
+        var createTransition = gmeClient.createChild({ parentId: initialState.activeNode, baseId: '/m/g' });
+        try {
+            gmeClient.setAttribute(initState, 'name', 'C');
+        } catch (err) {
+            errored = true;
+            console.log("error occurred please reload and continue");
+        }
+            
+        try {
+            const contractName = gmeClient.getNode(initialState.activeNode).getAttribute('name');
+            gmeClient.setAttribute(createTransition, 'name', "create");
+            gmeClient.setAttribute(createTransition, 'statements', "");
+            gmeClient.setAttribute(createTransition, 'input', contractName+"_owner: &signer");
+            gmeClient.setAttribute(createTransition, 'output', "let "+contractName+"_owner_addr = Signer::address_of("+contractName+"_owner);\nmove_to<"+contractName+"<Currency>>("+contractName+"_owner, T {Diem::zero<Currency>(),\n"+contractName+"_owner_addr,\nDiemTimestamp::now_seconds()});");
+            gmeClient.setAttribute(createTransition, 'tags', "");
+            gmeClient.setPointer(createTransition, 'src', initState);
+            gmeClient.setPointer(createTransition, 'dst', state);
+        } catch (err) {
+            errored = true;
+            console.log("error occurred please reload and continue");
+        }
+        return Q.all(all_promises).then(() => {
+            if (!errored){
+                gmeClient.completeTransaction();
+                WebGMEGlobal.State.registerActiveVisualizer('ModelEditor');
+            }
+            else {
+                gmeClient.notifyUser({message: "Node loading error occurred please reload the page and try again", severity: "danger"})
+                setError("Node loading error occurred please reload the page and try again")
+            }
+        });
     }
 
     const handleGenerateFSM = () => {
