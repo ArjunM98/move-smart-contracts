@@ -1,0 +1,15 @@
+{
+  "id": "FSMGenerator",
+  "name": "FSMGenerator",
+  "version": "0.1.0",
+  "description": "This plugin creates the FSM Model from the Move code from the saved code in the editor",
+  "icon": {
+    "class": "glyphicon glyphicon-cog",
+    "src": ""
+  },
+  "disableServerSideExecution": false,
+  "disableBrowserSideExecution": true,
+  "dependencies": [],
+  "writeAccessRequired": false,
+  "configStructure": []
+}
