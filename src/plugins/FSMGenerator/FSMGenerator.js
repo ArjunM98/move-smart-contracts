@@ -152,13 +152,6 @@ define([
                     // fName.tags = functionDefinitionList[i].substring(functionDefinitionList[i].indexOf(')')+1, functionDefinitionList[i].indexOf('return'));
                 }
 
-
-                // mNames.forEach(mn => {
-                //     if (functionDefinitionList[i].indexOf(mn.name) !== -1) {
-                //         fName.modifiers.push(mn.name);
-                //     }
-                // });
-
                 //Moving internal function code
                 if (i != functionDefinitionList.length - 1) {
                     var body = codeContent.trim().substring(codeContent.trim().indexOf(functionDefinitionList[i]) + functionDefinitionList[i].length + 1, codeContent.trim().indexOf(functionDefinitionList[i + 1]));

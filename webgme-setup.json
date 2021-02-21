@@ -25,6 +25,10 @@
       "MoveCodeGenerator": {
         "src": "src/plugins/MoveCodeGenerator",
         "test": "test/plugins/MoveCodeGenerator"
+      },
+      "FSMGenerator": {
+        "src": "src/plugins/FSMGenerator",
+        "test": "test/plugins/FSMGenerator"
       }
     }
   },
