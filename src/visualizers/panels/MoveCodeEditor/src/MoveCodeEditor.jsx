@@ -12,7 +12,6 @@ const MoveCodeEditor = ({ gmeClient, initialState }) => {
     const [code, setCode] = useState("// Write your code here");
 
     function onEditorChange(newValue) {
-        console.log("changed", newValue);
         setCode(newValue);
     }
 
@@ -66,8 +65,6 @@ const MoveCodeEditor = ({ gmeClient, initialState }) => {
     }
 
     const getAllFunctions = (codeContent) => {
-        // var codeContent = "address 0x1 { module auction { use 0x1::Diem::Diem; use 0x1::DiemAccount; use 0x1::Signer; use 0x1::DiemTimestamp; resource struct auction_res { currState : vector<u8> } resource struct Auction<Currency> { max_bid: Diem<Currency>, bidder: address, start_at: u64 } fun create (ownerAddr : &signer) { move_to<auction_res>(ownerAddr, auction_res { currState: b'AB' }); } fun bid (ownerAddr : address, bidder_addr: address, auction_owner_addr: address, bid: Diem<Currency>)  acquires { let baseResource = borrow_global_mut<auction_res>(ownerAddr); assert(baseResource.currState == AB); //State change\n *baseResource.currState = b'InTransition'; //Actions\n let auction = borrow_global_mut<Auction<Currency>>(auction_owner_addr); let bid_amt = Diem::value(&bid); let max_bid = Diem::value(&auction.max_bid);  assert(bid_amt > max_bid, 1); assert(bidder_addr != auction.bidder, 1);  if (max_bid > 0) { let to_send_back = Diem::withdraw(&mut auction.max_bid, max_bid); DiemAccount::deposit<Currency>(bidder_addr, auction.bidder, to_send_back, b'', b'');  };  Diem::deposit(&mut auction.max_bid, bid);  *auction.bidder = bidder_addr; //State change\n *baseResource.currState = b'AB'; } fun finish (ownerAddr : address, auction_owner: address)  acquires { let baseResource = borrow_global_mut<auction_res>(ownerAddr); assert(baseResource.currState == AB); //State change\n *baseResource.currState = b'InTransition'; //Actions\n let auction = borrow_global_mut<Auction<Currency>>(auction_owner_addr); assert(auction.auction_start + 432000 == DiemTimestamp::now_seconds());  //State change\n *baseResource.currState = b'F'; } fun start (ownerAddr : address, auction_addr: address)  acquires { let baseResource = borrow_global_mut<auction_res>(ownerAddr); assert(baseResource.currState == C); assert(exists<Auction<Currency>>(auction_addr)); //State change\n *baseResource.currState = b'AB'; } fun withdraw (ownerAddr : address, auction_owner_addr: address, bidder_addr: address)  acquires { let baseResource = borrow_global_mut<auction_res>(ownerAddr); assert(baseResource.currState == F); //State change\n *baseResource.currState = b'InTransition'; //Actions\n let Auction { bid, bidder: _, start_at: _, } = move_from<Auction<Currency>>(auction_owner_addr); let bid_amount = Diem::value(&bid); DiemAccount::deposit(bidder_addr, auction_owner_addr, bid, b'', b'');  //State change\n *baseResource.currState = b'F';}}}";
-        console.log("functionDefinitionList :"+codeContent);
         //Get all function names
         var fNames = [];
         var functionDefinitionList = codeContent.match(/fun [^\{}]*/g);
@@ -112,20 +109,13 @@ const MoveCodeEditor = ({ gmeClient, initialState }) => {
     };
 
     const getResouces = (codeContent) => {
-        // var codeContent = "address 0x1 { module auction { use 0x1::Diem::Diem; use 0x1::DiemAccount; use 0x1::Signer; use 0x1::DiemTimestamp; resource struct auction_res { currState : vector<u8> } resource struct Auction<Currency> { max_bid: Diem<Currency>, bidder: address, start_at: u64 } fun create (ownerAddr : &signer) { move_to<auction_res>(ownerAddr, auction_res { currState: b'AB' }); } fun bid (ownerAddr : address, bidder_addr: address, auction_owner_addr: address, bid: Diem<Currency>)  acquires { let baseResource = borrow_global_mut<auction_res>(ownerAddr); assert(baseResource.currState == AB); //State change\n *baseResource.currState = b'InTransition'; //Actions\n let auction = borrow_global_mut<Auction<Currency>>(auction_owner_addr); let bid_amt = Diem::value(&bid); let max_bid = Diem::value(&auction.max_bid);  assert(bid_amt > max_bid, 1); assert(bidder_addr != auction.bidder, 1);  if (max_bid > 0) { let to_send_back = Diem::withdraw(&mut auction.max_bid, max_bid); DiemAccount::deposit<Currency>(bidder_addr, auction.bidder, to_send_back, b'', b'');  };  Diem::deposit(&mut auction.max_bid, bid);  *auction.bidder = bidder_addr; //State change\n *baseResource.currState = b'AB'; } fun finish (ownerAddr : address, auction_owner: address)  acquires { let baseResource = borrow_global_mut<auction_res>(ownerAddr); assert(baseResource.currState == AB); //State change\n *baseResource.currState = b'InTransition'; //Actions\n let auction = borrow_global_mut<Auction<Currency>>(auction_owner_addr); assert(auction.auction_start + 432000 == DiemTimestamp::now_seconds());  //State change\n *baseResource.currState = b'F'; } fun start (ownerAddr : address, auction_addr: address)  acquires { let baseResource = borrow_global_mut<auction_res>(ownerAddr); assert(baseResource.currState == C); assert(exists<Auction<Currency>>(auction_addr)); //State change\n *baseResource.currState = b'AB'; } fun withdraw (ownerAddr : address, auction_owner_addr: address, bidder_addr: address)  acquires { let baseResource = borrow_global_mut<auction_res>(ownerAddr); assert(baseResource.currState == F); //State change\n *baseResource.currState = b'InTransition'; //Actions\n let Auction { bid, bidder: _, start_at: _, } = move_from<Auction<Currency>>(auction_owner_addr); let bid_amount = Diem::value(&bid); DiemAccount::deposit(bidder_addr, auction_owner_addr, bid, b'', b'');  //State change\n *baseResource.currState = b'F';}}}";
-        const temp = codeContent.match(/resource.+?(?=})+}/g)//^resource.+?(?=})+}/gms);
-        console.log("FAILS INSIDE RESOURCES", temp);
-        return temp
+        return codeContent.match(/resource.+?(?=})+}/g)
     }
     const getImports = (codeContent) => {
-        // var codeContent = "address 0x1 { module auction { use 0x1::Diem::Diem; use 0x1::DiemAccount; use 0x1::Signer; use 0x1::DiemTimestamp; resource struct auction_res { currState : vector<u8> } resource struct Auction<Currency> { max_bid: Diem<Currency>, bidder: address, start_at: u64 } fun create (ownerAddr : &signer) { move_to<auction_res>(ownerAddr, auction_res { currState: b'AB' }); } fun bid (ownerAddr : address, bidder_addr: address, auction_owner_addr: address, bid: Diem<Currency>)  acquires { let baseResource = borrow_global_mut<auction_res>(ownerAddr); assert(baseResource.currState == AB); //State change\n *baseResource.currState = b'InTransition'; //Actions\n let auction = borrow_global_mut<Auction<Currency>>(auction_owner_addr); let bid_amt = Diem::value(&bid); let max_bid = Diem::value(&auction.max_bid);  assert(bid_amt > max_bid, 1); assert(bidder_addr != auction.bidder, 1);  if (max_bid > 0) { let to_send_back = Diem::withdraw(&mut auction.max_bid, max_bid); DiemAccount::deposit<Currency>(bidder_addr, auction.bidder, to_send_back, b'', b'');  };  Diem::deposit(&mut auction.max_bid, bid);  *auction.bidder = bidder_addr; //State change\n *baseResource.currState = b'AB'; } fun finish (ownerAddr : address, auction_owner: address)  acquires { let baseResource = borrow_global_mut<auction_res>(ownerAddr); assert(baseResource.currState == AB); //State change\n *baseResource.currState = b'InTransition'; //Actions\n let auction = borrow_global_mut<Auction<Currency>>(auction_owner_addr); assert(auction.auction_start + 432000 == DiemTimestamp::now_seconds());  //State change\n *baseResource.currState = b'F'; } fun start (ownerAddr : address, auction_addr: address)  acquires { let baseResource = borrow_global_mut<auction_res>(ownerAddr); assert(baseResource.currState == C); assert(exists<Auction<Currency>>(auction_addr)); //State change\n *baseResource.currState = b'AB'; } fun withdraw (ownerAddr : address, auction_owner_addr: address, bidder_addr: address)  acquires { let baseResource = borrow_global_mut<auction_res>(ownerAddr); assert(baseResource.currState == F); //State change\n *baseResource.currState = b'InTransition'; //Actions\n let Auction { bid, bidder: _, start_at: _, } = move_from<Auction<Currency>>(auction_owner_addr); let bid_amount = Diem::value(&bid); DiemAccount::deposit(bidder_addr, auction_owner_addr, bid, b'', b'');  //State change\n *baseResource.currState = b'F';}}}";
-        const temp = codeContent.match(/use.+?(?=;)/g);
-        console.log("FAILS INSIDE IMPORTS", temp);
-        return temp
+        return codeContent.match(/use.+?(?=;)/g);
     }
 
     const test = () => {
-        console.log("in Testing");
         const Q = require('q');
 
         // var codeContent = "address 0x1 { module auction { use 0x1::Diem::Diem; use 0x1::DiemAccount; use 0x1::Signer; use 0x1::DiemTimestamp; resource struct auction_res { currState : vector<u8> } resource struct Auction<Currency> { max_bid: Diem<Currency>, bidder: address, start_at: u64 } fun create (ownerAddr : &signer) { move_to<auction_res>(ownerAddr, auction_res { currState: b'AB' }); } fun bid (ownerAddr : address, bidder_addr: address, auction_owner_addr: address, bid: Diem<Currency>)  acquires { let baseResource = borrow_global_mut<auction_res>(ownerAddr); assert(baseResource.currState == AB); //State change\n *baseResource.currState = b'InTransition'; //Actions\n let auction = borrow_global_mut<Auction<Currency>>(auction_owner_addr); let bid_amt = Diem::value(&bid); let max_bid = Diem::value(&auction.max_bid);  assert(bid_amt > max_bid, 1); assert(bidder_addr != auction.bidder, 1);  if (max_bid > 0) { let to_send_back = Diem::withdraw(&mut auction.max_bid, max_bid); DiemAccount::deposit<Currency>(bidder_addr, auction.bidder, to_send_back, b'', b'');  };  Diem::deposit(&mut auction.max_bid, bid);  *auction.bidder = bidder_addr; //State change\n *baseResource.currState = b'AB'; } fun finish (ownerAddr : address, auction_owner: address)  acquires { let baseResource = borrow_global_mut<auction_res>(ownerAddr); assert(baseResource.currState == AB); //State change\n *baseResource.currState = b'InTransition'; //Actions\n let auction = borrow_global_mut<Auction<Currency>>(auction_owner_addr); assert(auction.auction_start + 432000 == DiemTimestamp::now_seconds());  //State change\n *baseResource.currState = b'F'; } fun start (ownerAddr : address, auction_addr: address)  acquires { let baseResource = borrow_global_mut<auction_res>(ownerAddr); assert(baseResource.currState == C); assert(exists<Auction<Currency>>(auction_addr)); //State change\n *baseResource.currState = b'AB'; } fun withdraw (ownerAddr : address, auction_owner_addr: address, bidder_addr: address)  acquires { let baseResource = borrow_global_mut<auction_res>(ownerAddr); assert(baseResource.currState == F); //State change\n *baseResource.currState = b'InTransition'; //Actions\n let Auction { bid, bidder: _, start_at: _, } = move_from<Auction<Currency>>(auction_owner_addr); let bid_amount = Diem::value(&bid); DiemAccount::deposit(bidder_addr, auction_owner_addr, bid, b'', b'');  //State change\n *baseResource.currState = b'F';}}}";
@@ -137,14 +127,8 @@ const MoveCodeEditor = ({ gmeClient, initialState }) => {
 
         var names = getAllFunctions(codeContent);
         console.log("nameFSM:",  names)
-        // WebGMEGlobal.State.registerActiveVisualizer('ModelEditor');
-        // WebGMEGlobal.State.registerActiveVisualizer('MoveCodeEditor');
-        // console.log("RELOADING");
-        // window.location.reload();
-        // return;
         
         gmeClient.startTransaction();
-
         // Deletion of prev nodes
         gmeClient.deleteNodes(del);
 
@@ -157,7 +141,7 @@ const MoveCodeEditor = ({ gmeClient, initialState }) => {
         var all_promises = [];
         getAllFunctions(codeContent).forEach(fn => {
             var transition = gmeClient.createChild({ parentId: initialState.activeNode, baseId: '/m/A' });
-            try {
+            // try {
                 gmeClient.setAttribute(state, 'name', 'core');
                 gmeClient.setAttribute(transition, 'name', fn.name);
                 gmeClient.setAttribute(transition, 'statements', fn.code);
@@ -166,10 +150,10 @@ const MoveCodeEditor = ({ gmeClient, initialState }) => {
                 // gmeClient.setAttribute(transition, 'tags', fn.tags);
                 gmeClient.setPointer(transition, 'src', state);
                 gmeClient.setPointer(transition, 'dst', state);
-            } catch (err){
-                console.log("error occurred please reload and continue");
-                errored = true;
-            }
+            // } catch (err){
+            //     console.log("error occurred please reload and continue");
+            //     errored = true;
+            // }
             
             // if (fn.length > 0) {
             //     self._client.setAttributes(transition, 'guards', fn.modifiers.join(','));
@@ -183,13 +167,10 @@ const MoveCodeEditor = ({ gmeClient, initialState }) => {
         var createTransition = gmeClient.createChild({ parentId: initialState.activeNode, baseId: '/m/g' });
         var createLoop = gmeClient.createChild({ parentId: initialState.activeNode, baseId: '/m/g' });
             
-        try {
+        // try {
             gmeClient.setAttribute(initState, 'name', 'C');
             var node = gmeClient.getNode(initialState.activeNode);
             const contractName = node.getAttribute('name');
-            console.log("FAILS HerE")
-            console.log("IMPORTS = "+ getImports(codeContent))
-            console.log("RESOURCES = "+ getResouces(codeContent))
             gmeClient.setAttribute(initialState.activeNode, 'imports', getImports(codeContent).join('\n'));
             gmeClient.setAttribute(initialState.activeNode, 'resources', getResouces(codeContent).join('\n'));
 
@@ -210,10 +191,10 @@ const MoveCodeEditor = ({ gmeClient, initialState }) => {
             gmeClient.setPointer(createLoop, 'dst', initState);
 
             
-        } catch (err) {
-            errored = true;
-            console.log("error occurred please reload and continue");
-        }
+        // } catch (err) {
+        //     errored = true;
+        //     console.log("error occurred please reload and continue");
+        // }
         return Q.all(all_promises).then(() => {
             if (!errored){
                 gmeClient.completeTransaction();

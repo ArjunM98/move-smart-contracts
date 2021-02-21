@@ -21,6 +21,7 @@ define(['js/PanelBase/PanelBaseWithHeader',
     var ModelEditorPanel;
 
     ModelEditorPanel = function (layoutManager, params) {
+        WebGMEGlobal.ModelEditorPanel = {}
         var options = {};
 
         //set properties from component settings
@@ -88,9 +89,8 @@ define(['js/PanelBase/PanelBaseWithHeader',
     };
 
     ModelEditorPanel.prototype.destroy = function () {
-        WebGMEGlobal.ModelEditorPanel = WebGMEGlobal.Client.getNode(WebGMEGlobal.State.getActiveObject())
-        WebGMEGlobal.ModelEditorClient = this._client;
-        WebGMEGlobal.other = this;
+        // if(WebGMEGlobal.State.getActiveObject())
+        //     WebGMEGlobal.ModelEditorPanel[WebGMEGlobal.State.getActiveObject()] = this;
         this.control.destroy();
         this.widget.destroy();
 
@@ -101,12 +101,8 @@ define(['js/PanelBase/PanelBaseWithHeader',
 
     /* override IActivePanel.prototype.onActivate */
     ModelEditorPanel.prototype.onActivate = function () {
-        WebGMEGlobal.ModelEditorPanel = WebGMEGlobal.Client.getNode(WebGMEGlobal.State.getActiveObject())
-        WebGMEGlobal.ModelEditorClient = this._client;
-        WebGMEGlobal.other1 = this.widget;
-        WebGMEGlobal.other2 = this.control;
-        WebGMEGlobal.other = this;
-
+        // if(WebGMEGlobal.State.getActiveObject())
+        //     WebGMEGlobal.ModelEditorPanel[WebGMEGlobal.State.getActiveObject()] = this;
         this.widget.onActivate();
         this.control.onActivate();
         WebGMEGlobal.KeyboardManager.setListener(this.widget);
