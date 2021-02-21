@@ -1,6 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button, Container } from '@material-ui/core';
-import Editor from '@monaco-editor/react';
+import AceEditor from "react-ace";
+
+import "ace-builds/src-noconflict/mode-rust";
+import "ace-builds/src-noconflict/theme-monokai";
 
 const MoveCodeEditor = ({ gmeClient, initialState }) => {
 
@@ -8,6 +11,10 @@ const MoveCodeEditor = ({ gmeClient, initialState }) => {
     const [error, setError] = useState(null);
     const [code, setCode] = useState("// Write your code here");
 
+    function onEditorChange(newValue) {
+        console.log("changed", newValue);
+        setCode(newValue);
+    }
 
     // componentDidMount() sideEffect
     useEffect(() => {
@@ -53,135 +60,81 @@ const MoveCodeEditor = ({ gmeClient, initialState }) => {
         }
     };
 
-    // const getAllFunctions = () => {
-    //     var codeContent = code;
-    //     //Get all modifier names - Move doesnt have modifiers
-    //     // var modifiersList = codeContent.match(/modifier [^\{}]*/g);
-    //     // var mNames = [];
-    //     // if (modifiersList) {
-    //     //     for (var i = 0; i < modifiersList.length; i++) {
-    //     //         var mName = {};
-    //     //         mName.name = modifiersList[i].match(/modifier [^\()]*/g)[0].replace('modifier ', '');
+    const saveCode = () => {
+        const contract = gmeClient.getNode(initialState.activeNode);
+        gmeClient.setAttribute(contract.getId(), "customMoveCode", code);
+    }
 
-    //     //         if(i != modifiersList.length-1){
-    //     //             var body = codeContent.substring(codeContent.indexOf(modifiersList[i]) + modifiersList[i].length + 1, codeContent.indexOf(modifiersList[i + 1]));
-    //     //             body = body.trim().substring(0, body.length - 2);
-    //     //             body = body.replace('_;', '').replace('}','').replace('if (','').replace('))', ')');
-    //     //             mName.condition = body;
-    //     //         } else {
-    //     //             var body = codeContent.substring(codeContent.indexOf(modifiersList[i]) + modifiersList[i].length + 1, codeContent.indexOf('function')-1);
-    //     //             body = body.trim().substring(0, body.length - 2);
-    //     //             body = body.replace('_;', '').replace('}','').replace('if (','').replace('))', ')');
-    //     //             mName.condition = body;
-    //     //         }
-    //     //         mNames.push(mName);
-    //     //     }
-    //     // }
+    const getAllFunctions = (codeContent) => {
+        // var codeContent = "address 0x1 { module auction { use 0x1::Diem::Diem; use 0x1::DiemAccount; use 0x1::Signer; use 0x1::DiemTimestamp; resource struct auction_res { currState : vector<u8> } resource struct Auction<Currency> { max_bid: Diem<Currency>, bidder: address, start_at: u64 } fun create (ownerAddr : &signer) { move_to<auction_res>(ownerAddr, auction_res { currState: b'AB' }); } fun bid (ownerAddr : address, bidder_addr: address, auction_owner_addr: address, bid: Diem<Currency>)  acquires { let baseResource = borrow_global_mut<auction_res>(ownerAddr); assert(baseResource.currState == AB); //State change\n *baseResource.currState = b'InTransition'; //Actions\n let auction = borrow_global_mut<Auction<Currency>>(auction_owner_addr); let bid_amt = Diem::value(&bid); let max_bid = Diem::value(&auction.max_bid);  assert(bid_amt > max_bid, 1); assert(bidder_addr != auction.bidder, 1);  if (max_bid > 0) { let to_send_back = Diem::withdraw(&mut auction.max_bid, max_bid); DiemAccount::deposit<Currency>(bidder_addr, auction.bidder, to_send_back, b'', b'');  };  Diem::deposit(&mut auction.max_bid, bid);  *auction.bidder = bidder_addr; //State change\n *baseResource.currState = b'AB'; } fun finish (ownerAddr : address, auction_owner: address)  acquires { let baseResource = borrow_global_mut<auction_res>(ownerAddr); assert(baseResource.currState == AB); //State change\n *baseResource.currState = b'InTransition'; //Actions\n let auction = borrow_global_mut<Auction<Currency>>(auction_owner_addr); assert(auction.auction_start + 432000 == DiemTimestamp::now_seconds());  //State change\n *baseResource.currState = b'F'; } fun start (ownerAddr : address, auction_addr: address)  acquires { let baseResource = borrow_global_mut<auction_res>(ownerAddr); assert(baseResource.currState == C); assert(exists<Auction<Currency>>(auction_addr)); //State change\n *baseResource.currState = b'AB'; } fun withdraw (ownerAddr : address, auction_owner_addr: address, bidder_addr: address)  acquires { let baseResource = borrow_global_mut<auction_res>(ownerAddr); assert(baseResource.currState == F); //State change\n *baseResource.currState = b'InTransition'; //Actions\n let Auction { bid, bidder: _, start_at: _, } = move_from<Auction<Currency>>(auction_owner_addr); let bid_amount = Diem::value(&bid); DiemAccount::deposit(bidder_addr, auction_owner_addr, bid, b'', b'');  //State change\n *baseResource.currState = b'F';}}}";
+        console.log("functionDefinitionList :"+codeContent);
+        //Get all function names
+        var fNames = [];
+        var functionDefinitionList = codeContent.match(/fun [^\{}]*/g);
 
-    //     //Get all function names
-    //     var fNames = [];
-    //     var functionDefinitionList = codeContent.match(/function [^\{}]*/g);
-    //     if (functionDefinitionList) {
-    //         for (var i = 0; i < functionDefinitionList.length; i++) {
-    //             var fName = {};
-    //             fName.definition = functionDefinitionList[i];
-    //             fName.name = functionDefinitionList[i].match(/function [^\()]*/g)[0].replace('function ', '');
-    //             // fName.modifiers = [];
-    //             fName.outputs = '';
-    //             fName.inputs = functionDefinitionList[i].substring(functionDefinitionList[i].indexOf('(')+1, functionDefinitionList[i].indexOf(')'));
-    //             if(functionDefinitionList[i].indexOf('returns') != -1) {
-    //                 var returnval = functionDefinitionList[i].substring(functionDefinitionList[i].indexOf('returns')+1);
-    //                 fName.outputs = returnval.substring(returnval.indexOf('(')+1, returnval.indexOf(')'));
-    //                 fName.tags = functionDefinitionList[i].substring(functionDefinitionList[i].indexOf(')')+1, functionDefinitionList[i].indexOf('returns'));
-    //             } else {
-    //                 fName.tags = functionDefinitionList[i].substring(functionDefinitionList[i].indexOf(')')+1);
-    //             }
+        if (functionDefinitionList) {
+            for (var i = 0; i < functionDefinitionList.length; i++) {
+                var fName = {};
+                fName.definition = functionDefinitionList[i];
+                fName.name = functionDefinitionList[i].match(/fun [^\()]*/g)[0].replace('function ', '');
+                // fName.modifiers = [];
+                fName.outputs = '';
+                fName.inputs = functionDefinitionList[i].substring(functionDefinitionList[i].indexOf('(')+1, functionDefinitionList[i].indexOf(')'));
+                if(functionDefinitionList[i].indexOf('return') != -1) {
+                    var returnval = functionDefinitionList[i].substring(functionDefinitionList[i].indexOf('return')+1);
+                    fName.outputs = returnval.substring(returnval.indexOf('(')+1, returnval.indexOf(')'));
+                    // fName.tags = functionDefinitionList[i].substring(functionDefinitionList[i].indexOf(')')+1, functionDefinitionList[i].indexOf('return'));
+                }
 
 
-    //             // mNames.forEach(mn => {
-    //             //     if (functionDefinitionList[i].indexOf(mn.name) !== -1) {
-    //             //         fName.modifiers.push(mn.name);
-    //             //     }
-    //             // });
+                // mNames.forEach(mn => {
+                //     if (functionDefinitionList[i].indexOf(mn.name) !== -1) {
+                //         fName.modifiers.push(mn.name);
+                //     }
+                // });
 
-    //             //Moving internal function code
-    //             if (i != functionDefinitionList.length - 1) {
-    //                 var body = codeContent.trim().substring(codeContent.trim().indexOf(functionDefinitionList[i]) + functionDefinitionList[i].length + 1, codeContent.trim().indexOf(functionDefinitionList[i + 1]));
-    //                 body = body.trim().substring(0, body.trim().length - 1);
-    //                 fName.code = body;
-    //             } else {
-    //                 var body = codeContent.trim().substring(codeContent.trim().indexOf(functionDefinitionList[i]) + functionDefinitionList[i].length + 1, codeContent.trim().length - 1);
-    //                 body = body.trim().substring(0, body.trim().length - 1);
-    //                 fName.code = body;
-    //             }
+                //Moving internal function code
+                if (i != functionDefinitionList.length - 1) {
+                    var body = codeContent.trim().substring(codeContent.trim().indexOf(functionDefinitionList[i]) + functionDefinitionList[i].length + 1, codeContent.trim().indexOf(functionDefinitionList[i + 1]));
+                    body = body.trim().substring(0, body.trim().length - 1);
+                    fName.code = body;
+                } else {
+                    var body = codeContent.trim().substring(codeContent.trim().indexOf(functionDefinitionList[i]) + functionDefinitionList[i].length + 1, codeContent.trim().length - 1);
+                    body = body.trim().substring(0, body.trim().length - 1);
+                    fName.code = body;
+                }
 
-    //             //Loading inputs for each function
-    //             fNames.push(fName);
-    //         }
-    //     }
-    //     return fNames;
-    // };
+                //Loading inputs for each function
+                fNames.push(fName);
+            }
+        }
+        return fNames;
+    };
 
-    // const getVariableDefinitions = () => {
-    //     var definitions = '';
-    //     var codeContent = code;
-
-    //     var defaultdef = 'uint private creationTime = now;';
-    //     var stateDef = 'enum States';
-
-    //     definitions = codeContent.substring(codeContent.indexOf(defaultdef) + defaultdef.length + 1, codeContent.indexOf(stateDef));
-
-    //     //Loading modifiers
-
-    //     // if(codeContent.indexOf('modifier') != -1){
-    //     //     definitions += codeContent.substring(codeContent.indexOf('modifier'), codeContent.indexOf('function'));
-    //     // }
-
-    //     return definitions;
-    // };
-
-    // const handleGenerateFSM = () => {
-    //     var self = this,
-    //                core,
-    //                all_promises = [];
-    //     var fNames = getAllFunctions();
-    //     // var node = self._client.getNode(WebGMEGlobal.State.getActiveObject());
-    //     // self._client.startTransaction();
-
-    //     self._client.setAttribute(node.getId(), 'definitions', getVariableDefinitions());
-    //     //Creating initial state
-    //     var initialState = self._client.createChild({ parentId: node.getId(), baseId: '/m/z' });
-    //     var deferred = Q.defer();
-    //     fNames.forEach(fn => {
-
-    //         var transition = self._client.createChild({ parentId: node.getId(), baseId: '/m/A' });
-
-    //         self._client.setAttribute(transition, 'name', fn.name);
-    //         self._client.setAttribute(transition, 'statements', fn.code);
-    //         self._client.setAttribute(transition, 'input', fn.inputs);
-    //         self._client.setAttribute(transition, 'output', fn.outputs);
-    //         self._client.setAttribute(transition, 'tags', fn.tags);
-    //         self._client.setPointer(transition, 'src', initialState);
-    //         self._client.setPointer(transition, 'dst', initialState);
-    //         if (fn.modifiers.length > 0) {
-    //             self._client.setAttribute(transition, 'guards', fn.modifiers.join(','));
-    //         }
-    //         deferred.resolve(fn);
-    //         all_promises.push(deferred.promise);
-    //     });
-
-    //     self._client.completeTransaction();
-    //     return Q.all(all_promises);
-    // };
-
-
+    const getResouces = (codeContent) => {
+        // var codeContent = "address 0x1 { module auction { use 0x1::Diem::Diem; use 0x1::DiemAccount; use 0x1::Signer; use 0x1::DiemTimestamp; resource struct auction_res { currState : vector<u8> } resource struct Auction<Currency> { max_bid: Diem<Currency>, bidder: address, start_at: u64 } fun create (ownerAddr : &signer) { move_to<auction_res>(ownerAddr, auction_res { currState: b'AB' }); } fun bid (ownerAddr : address, bidder_addr: address, auction_owner_addr: address, bid: Diem<Currency>)  acquires { let baseResource = borrow_global_mut<auction_res>(ownerAddr); assert(baseResource.currState == AB); //State change\n *baseResource.currState = b'InTransition'; //Actions\n let auction = borrow_global_mut<Auction<Currency>>(auction_owner_addr); let bid_amt = Diem::value(&bid); let max_bid = Diem::value(&auction.max_bid);  assert(bid_amt > max_bid, 1); assert(bidder_addr != auction.bidder, 1);  if (max_bid > 0) { let to_send_back = Diem::withdraw(&mut auction.max_bid, max_bid); DiemAccount::deposit<Currency>(bidder_addr, auction.bidder, to_send_back, b'', b'');  };  Diem::deposit(&mut auction.max_bid, bid);  *auction.bidder = bidder_addr; //State change\n *baseResource.currState = b'AB'; } fun finish (ownerAddr : address, auction_owner: address)  acquires { let baseResource = borrow_global_mut<auction_res>(ownerAddr); assert(baseResource.currState == AB); //State change\n *baseResource.currState = b'InTransition'; //Actions\n let auction = borrow_global_mut<Auction<Currency>>(auction_owner_addr); assert(auction.auction_start + 432000 == DiemTimestamp::now_seconds());  //State change\n *baseResource.currState = b'F'; } fun start (ownerAddr : address, auction_addr: address)  acquires { let baseResource = borrow_global_mut<auction_res>(ownerAddr); assert(baseResource.currState == C); assert(exists<Auction<Currency>>(auction_addr)); //State change\n *baseResource.currState = b'AB'; } fun withdraw (ownerAddr : address, auction_owner_addr: address, bidder_addr: address)  acquires { let baseResource = borrow_global_mut<auction_res>(ownerAddr); assert(baseResource.currState == F); //State change\n *baseResource.currState = b'InTransition'; //Actions\n let Auction { bid, bidder: _, start_at: _, } = move_from<Auction<Currency>>(auction_owner_addr); let bid_amount = Diem::value(&bid); DiemAccount::deposit(bidder_addr, auction_owner_addr, bid, b'', b'');  //State change\n *baseResource.currState = b'F';}}}";
+        const temp = codeContent.match(/resource.+?(?=})+}/g)//^resource.+?(?=})+}/gms);
+        console.log("FAILS INSIDE RESOURCES", temp);
+        return temp
+    }
+    const getImports = (codeContent) => {
+        // var codeContent = "address 0x1 { module auction { use 0x1::Diem::Diem; use 0x1::DiemAccount; use 0x1::Signer; use 0x1::DiemTimestamp; resource struct auction_res { currState : vector<u8> } resource struct Auction<Currency> { max_bid: Diem<Currency>, bidder: address, start_at: u64 } fun create (ownerAddr : &signer) { move_to<auction_res>(ownerAddr, auction_res { currState: b'AB' }); } fun bid (ownerAddr : address, bidder_addr: address, auction_owner_addr: address, bid: Diem<Currency>)  acquires { let baseResource = borrow_global_mut<auction_res>(ownerAddr); assert(baseResource.currState == AB); //State change\n *baseResource.currState = b'InTransition'; //Actions\n let auction = borrow_global_mut<Auction<Currency>>(auction_owner_addr); let bid_amt = Diem::value(&bid); let max_bid = Diem::value(&auction.max_bid);  assert(bid_amt > max_bid, 1); assert(bidder_addr != auction.bidder, 1);  if (max_bid > 0) { let to_send_back = Diem::withdraw(&mut auction.max_bid, max_bid); DiemAccount::deposit<Currency>(bidder_addr, auction.bidder, to_send_back, b'', b'');  };  Diem::deposit(&mut auction.max_bid, bid);  *auction.bidder = bidder_addr; //State change\n *baseResource.currState = b'AB'; } fun finish (ownerAddr : address, auction_owner: address)  acquires { let baseResource = borrow_global_mut<auction_res>(ownerAddr); assert(baseResource.currState == AB); //State change\n *baseResource.currState = b'InTransition'; //Actions\n let auction = borrow_global_mut<Auction<Currency>>(auction_owner_addr); assert(auction.auction_start + 432000 == DiemTimestamp::now_seconds());  //State change\n *baseResource.currState = b'F'; } fun start (ownerAddr : address, auction_addr: address)  acquires { let baseResource = borrow_global_mut<auction_res>(ownerAddr); assert(baseResource.currState == C); assert(exists<Auction<Currency>>(auction_addr)); //State change\n *baseResource.currState = b'AB'; } fun withdraw (ownerAddr : address, auction_owner_addr: address, bidder_addr: address)  acquires { let baseResource = borrow_global_mut<auction_res>(ownerAddr); assert(baseResource.currState == F); //State change\n *baseResource.currState = b'InTransition'; //Actions\n let Auction { bid, bidder: _, start_at: _, } = move_from<Auction<Currency>>(auction_owner_addr); let bid_amount = Diem::value(&bid); DiemAccount::deposit(bidder_addr, auction_owner_addr, bid, b'', b'');  //State change\n *baseResource.currState = b'F';}}}";
+        const temp = codeContent.match(/use.+?(?=;)/g);
+        console.log("FAILS INSIDE IMPORTS", temp);
+        return temp
+    }
 
     const test = () => {
-        console.log("Testing");
+        console.log("in Testing");
         const Q = require('q');
 
+        var codeContent = "address 0x1 { module auction { use 0x1::Diem::Diem; use 0x1::DiemAccount; use 0x1::Signer; use 0x1::DiemTimestamp; resource struct auction_res { currState : vector<u8> } resource struct Auction<Currency> { max_bid: Diem<Currency>, bidder: address, start_at: u64 } fun create (ownerAddr : &signer) { move_to<auction_res>(ownerAddr, auction_res { currState: b'AB' }); } fun bid (ownerAddr : address, bidder_addr: address, auction_owner_addr: address, bid: Diem<Currency>)  acquires { let baseResource = borrow_global_mut<auction_res>(ownerAddr); assert(baseResource.currState == AB); //State change\n *baseResource.currState = b'InTransition'; //Actions\n let auction = borrow_global_mut<Auction<Currency>>(auction_owner_addr); let bid_amt = Diem::value(&bid); let max_bid = Diem::value(&auction.max_bid);  assert(bid_amt > max_bid, 1); assert(bidder_addr != auction.bidder, 1);  if (max_bid > 0) { let to_send_back = Diem::withdraw(&mut auction.max_bid, max_bid); DiemAccount::deposit<Currency>(bidder_addr, auction.bidder, to_send_back, b'', b'');  };  Diem::deposit(&mut auction.max_bid, bid);  *auction.bidder = bidder_addr; //State change\n *baseResource.currState = b'AB'; } fun finish (ownerAddr : address, auction_owner: address)  acquires { let baseResource = borrow_global_mut<auction_res>(ownerAddr); assert(baseResource.currState == AB); //State change\n *baseResource.currState = b'InTransition'; //Actions\n let auction = borrow_global_mut<Auction<Currency>>(auction_owner_addr); assert(auction.auction_start + 432000 == DiemTimestamp::now_seconds());  //State change\n *baseResource.currState = b'F'; } fun start (ownerAddr : address, auction_addr: address)  acquires { let baseResource = borrow_global_mut<auction_res>(ownerAddr); assert(baseResource.currState == C); assert(exists<Auction<Currency>>(auction_addr)); //State change\n *baseResource.currState = b'AB'; } fun withdraw (ownerAddr : address, auction_owner_addr: address, bidder_addr: address)  acquires { let baseResource = borrow_global_mut<auction_res>(ownerAddr); assert(baseResource.currState == F); //State change\n *baseResource.currState = b'InTransition'; //Actions\n let Auction { bid, bidder: _, start_at: _, } = move_from<Auction<Currency>>(auction_owner_addr); let bid_amount = Diem::value(&bid); DiemAccount::deposit(bidder_addr, auction_owner_addr, bid, b'', b'');  //State change\n *baseResource.currState = b'F';}}}";
+
         var del = gmeClient.getNode(initialState.activeNode).getChildrenIds();
-        console.log(del)
+        console.log('del='+del)
+
+        var names = getAllFunctions(codeContent);
+        console.log("nameFSM:",  names)
         // WebGMEGlobal.State.registerActiveVisualizer('ModelEditor');
         // WebGMEGlobal.State.registerActiveVisualizer('MoveCodeEditor');
         // console.log("RELOADING");
@@ -197,24 +150,18 @@ const MoveCodeEditor = ({ gmeClient, initialState }) => {
 
         //Creation of state node with all transitions
         var state = gmeClient.createChild({parentId: initialState.activeNode, baseId: '/m/9'});
-        try {
-            gmeClient.setAttribute(state, 'name', 'core');
-        } catch (err) {
-            console.log("error occurred please reload and continue");
-            errored = true;
-        }
+
         var deferred = Q.defer();
         var all_promises = [];
-        ["name1", "name2"].forEach(fn => {
-
+        getAllFunctions(codeContent).forEach(fn => {
             var transition = gmeClient.createChild({ parentId: initialState.activeNode, baseId: '/m/A' });
-            
             try {
-                gmeClient.setAttribute(transition, 'name', fn);
-                gmeClient.setAttribute(transition, 'statements', fn);
-                gmeClient.setAttribute(transition, 'input', fn);
-                gmeClient.setAttribute(transition, 'output', fn);
-                gmeClient.setAttribute(transition, 'tags', fn);
+                gmeClient.setAttribute(state, 'name', 'core');
+                gmeClient.setAttribute(transition, 'name', fn.name);
+                gmeClient.setAttribute(transition, 'statements', fn.code);
+                gmeClient.setAttribute(transition, 'input', fn.inputs);
+                gmeClient.setAttribute(transition, 'output', fn.outputs);
+                // gmeClient.setAttribute(transition, 'tags', fn.tags);
                 gmeClient.setPointer(transition, 'src', state);
                 gmeClient.setPointer(transition, 'dst', state);
             } catch (err){
@@ -232,22 +179,35 @@ const MoveCodeEditor = ({ gmeClient, initialState }) => {
         //Creation of initial state node
         var initState = gmeClient.createChild({parentId: initialState.activeNode, baseId: '/m/z'});
         var createTransition = gmeClient.createChild({ parentId: initialState.activeNode, baseId: '/m/g' });
-        try {
-            gmeClient.setAttribute(initState, 'name', 'C');
-        } catch (err) {
-            errored = true;
-            console.log("error occurred please reload and continue");
-        }
+        var createLoop = gmeClient.createChild({ parentId: initialState.activeNode, baseId: '/m/g' });
             
         try {
-            const contractName = gmeClient.getNode(initialState.activeNode).getAttribute('name');
-            gmeClient.setAttribute(createTransition, 'name', "create");
-            gmeClient.setAttribute(createTransition, 'statements', "");
-            gmeClient.setAttribute(createTransition, 'input', contractName+"_owner: &signer");
-            gmeClient.setAttribute(createTransition, 'output', "let "+contractName+"_owner_addr = Signer::address_of("+contractName+"_owner);\nmove_to<"+contractName+"<Currency>>("+contractName+"_owner, T {Diem::zero<Currency>(),\n"+contractName+"_owner_addr,\nDiemTimestamp::now_seconds()});");
-            gmeClient.setAttribute(createTransition, 'tags', "");
+            gmeClient.setAttribute(initState, 'name', 'C');
+            var node = gmeClient.getNode(initialState.activeNode);
+            const contractName = node.getAttribute('name');
+            console.log("FAILS HerE")
+            console.log("IMPORTS = "+ getImports(codeContent))
+            console.log("RESOURCES = "+ getResouces(codeContent))
+            gmeClient.setAttribute(initialState.activeNode, 'imports', getImports(codeContent).join('\n'));
+            gmeClient.setAttribute(initialState.activeNode, 'resources', getResouces(codeContent).join('\n'));
+
+            gmeClient.setAttribute(createTransition, 'name', "start");
+            gmeClient.setAttribute(createTransition, 'guards', "exists<"+contractName+"<Currency>>("+contractName+"_addr)");
+            gmeClient.setAttribute(createTransition, 'input', contractName+"_addr: address");
+            gmeClient.setAttribute(createTransition, 'output', "");
+            // gmeClient.setAttribute(createTransition, 'tags', "");
             gmeClient.setPointer(createTransition, 'src', initState);
             gmeClient.setPointer(createTransition, 'dst', state);
+
+            gmeClient.setAttribute(createLoop, 'name', "create");
+            gmeClient.setAttribute(createLoop, 'statements', "");
+            gmeClient.setAttribute(createLoop, 'input', contractName+"_owner: &signer");
+            gmeClient.setAttribute(createLoop, 'output', "let "+contractName+"_owner_addr = Signer::address_of("+contractName+"_owner);\nmove_to<"+contractName+"<Currency>>("+contractName+"_owner, T {Diem::zero<Currency>(),\n"+contractName+"_owner_addr,\nDiemTimestamp::now_seconds()});");
+            // gmeClient.setAttribute(createLoop, 'tags', "");
+            gmeClient.setPointer(createLoop, 'src', initState);
+            gmeClient.setPointer(createLoop, 'dst', initState);
+
+            
         } catch (err) {
             errored = true;
             console.log("error occurred please reload and continue");
@@ -256,13 +216,15 @@ const MoveCodeEditor = ({ gmeClient, initialState }) => {
             if (!errored){
                 gmeClient.completeTransaction();
                 WebGMEGlobal.State.registerActiveVisualizer('ModelEditor');
+                gmeClient.notifyUser({message: "Success! FSM has been generated", severity: "success"});
             }
             else {
-                gmeClient.notifyUser({message: "Node loading error occurred please reload the page and try again", severity: "danger"})
-                setError("Node loading error occurred please reload the page and try again")
+                gmeClient.notifyUser({message: "Node loading error occurred please reload the page and try again", severity: "danger"});
+                setError("Node loading error occurred please reload the page and try again");
+                // window.location.reload();
             }
         });
-    }
+    };
 
     const handleGenerateFSM = () => {
         test();
@@ -313,11 +275,34 @@ const MoveCodeEditor = ({ gmeClient, initialState }) => {
                     Generate FSM
                 </Button>
 
-                <Editor
-                    height="65vh"
-                    language="rust"
+                <Button
+                    style={{ marginRight: "1rem", marginBottom: "1rem", marginLeft: "185px" }}
+                    variant="contained"
+                    color="secondary"
+                    size="medium"
+                    onClick={saveCode}
+                >
+                    Save Code
+                </Button>
+
+                <AceEditor
+                    width="750px"
+                    mode="rust"
+                    name="Move Code Editor"
+                    theme="monokai"
                     value={code}
-                    theme="dark"
+                    fontSize={12}
+                    highlightActiveLine={true}
+                    showPrintMargin={true}
+                    showGutter={true}
+                    onChange={onEditorChange}
+                    setOptions={{
+                        enableBasicAutocompletion: true,
+                        enableLiveAutocompletion: false,
+                        enableSnippets: false,
+                        showLineNumbers: true,
+                        tabSize: 2,
+                    }}
                 />
             </Container>
     );
