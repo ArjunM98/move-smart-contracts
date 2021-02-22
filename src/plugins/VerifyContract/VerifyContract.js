@@ -300,24 +300,24 @@ define([
     let propertiesTxt = ''
     let properties = []
     if (currentConfig.templateOne !== '') {
-      properties = VerifyContract.prototype.parseProperties.call(self, model, currentConfig.templateOne)
+      properties = self.CTLProperties.parseProperties(model, currentConfig.templateOne)
       propertiesSMV += self.CTLProperties.generateFirstTemplateProperties(bipTransitionsToSMVNames, actionNamesToTransitionNames, properties)
       propertiesTxt += self.CTLProperties.generateFirstTemplatePropertiesTxt(properties)
     }
     if (currentConfig.templateTwo !== '') {
-      properties = VerifyContract.prototype.parseProperties.call(self, model, currentConfig.templateTwo)
+      properties = self.CTLProperties.parseProperties(model, currentConfig.templateTwo)
       propertiesSMV += self.CTLProperties.generateSecondTemplateProperties(bipTransitionsToSMVNames, actionNamesToTransitionNames, properties)
       fairnessProperties += self.CTLProperties.generateSecondTemplateFairnessProperties(bipTransitionsToSMVNames, actionNamesToTransitionNames, properties)
       propertiesTxt += self.CTLProperties.generateSecondTemplatePropertiesTxt(properties)
     }
     if (currentConfig.templateThree !== '') {
-      properties = VerifyContract.prototype.parseProperties.call(self, model, currentConfig.templateThree)
+      properties = self.CTLProperties.parseProperties(model, currentConfig.templateThree)
       propertiesSMV += self.CTLProperties.generateThirdTemplateProperties(bipTransitionsToSMVNames, actionNamesToTransitionNames, properties)
       fairnessProperties += self.CTLProperties.generateThirdTemplateFairnessProperties(bipTransitionsToSMVNames, actionNamesToTransitionNames, properties)
       propertiesTxt += self.CTLProperties.generateThirdTemplatePropertiesTxt(properties)
     }
     if (currentConfig.templateFour !== '') {
-      properties = VerifyContract.prototype.parseProperties.call(self, model, currentConfig.templateFour)
+      properties = self.CTLProperties.parseProperties(model, currentConfig.templateFour)
       propertiesSMV += self.CTLProperties.generateFourthTemplateProperties(bipTransitionsToSMVNames, actionNamesToTransitionNames, properties)
       propertiesTxt += self.CTLProperties.generateFourthTemplatePropertiesTxt(properties)
     }
@@ -328,46 +328,6 @@ define([
     fs.appendFileSync(path + '/' + model.name + '.smv', propertiesSMV)
     fs.appendFileSync(path + '/' + model.name + '.smv', fairnessProperties)
     fs.writeFileSync(path + '/' + model.name + 'Prop.txt', propertiesTxt)
-  }
-
-  /**
-     *
-     * Helper function to parse user specified properties
-     *
-     * @param model - Model object
-     * @param properties - config properties
-     */
-  VerifyContract.prototype.parseProperties = function (model, properties) {
-    const parsedProperties = []
-    let clauses; let actions
-    let property; let clause; let action; let actionName
-    let transitions; let transition
-
-    for (property of properties.split(';')) {
-      clauses = [] // collect all clauses for this property
-      for (clause of property.split('#')) {
-        actions = [] // collect all actions for this clause
-        for (action of clause.split('|')) {
-          actionName = action.replace(/\s/g, '') // all comparisons will be whitespace-agnostic
-          transitions = []
-          for (transition of model.transitions) { // for each transition, check if it matches the action specification
-            if (transition.actionName !== undefined && transition.actionName.replace(/[;\s]+/g, '') === actionName) {
-              transitions.push(transition.actionName)
-            }
-          }
-          if (transitions.length !== 1) { // action specification is ambiguous since multiple transitions match it
-            if (transitions.length === 0) {
-              throw new Error('Could not find action: ' + action + ' Possible reason: Statement was specified without function name.')
-            }
-            throw new Error('Ambiguous action (multiple instances occured): ' + action)
-          }
-          actions.push(transitions[0]) // single transition matches the action specification
-        }
-        clauses.push(actions) // push this clause
-      }
-      parsedProperties.push(clauses) // push this property
-    }
-    return parsedProperties
   }
 
   /**
