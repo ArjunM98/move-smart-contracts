@@ -100,7 +100,7 @@ const MoveCodeEditor = ({ gmeClient, initialState }) => {
                 </Button>
 
                 <Button
-                    style={{ marginRight: "1rem", marginBottom: "1rem", marginLeft: "185px" }}
+                    style={{ marginRight: "1rem", marginBottom: "1rem", marginLeft: "315px" }}
                     variant="contained"
                     color="secondary"
                     size="medium"

@@ -10,11 +10,15 @@
 define([
     'plugin/PluginConfig',
     'text!./metadata.json',
-    'plugin/PluginBase'
+    'plugin/PluginBase',
+    'tree-sitter',
+    '@movei/tree-sitter-move'
 ], function (
     PluginConfig,
     pluginMetadata,
-    PluginBase) {
+    PluginBase,
+    Parser,
+    MoveGrammer) {
     'use strict';
 
     pluginMetadata = JSON.parse(pluginMetadata);
@@ -30,6 +34,8 @@ define([
         // Call base class' constructor.
         PluginBase.call(this);
         this.pluginMetadata = pluginMetadata;
+        this.parser = new Parser();
+        this.parser.setLanguage(MoveGrammer);
     }
 
     /**
@@ -55,9 +61,41 @@ define([
     FSMGenerator.prototype.main = function (callback) {
         // Use this to access core, project, result, logger etc from PluginBase.
         const self = this;
-
         const codeContent = self.core.getAttribute(self.activeNode,'customMoveCode');
 
+        var violations = FSMGenerator.prototype.parseResult.call(self, self.activeNode, codeContent);
+        if (violations.length > 0 || other.length > 0){
+            console.log("There are violations");
+            violations.forEach(violation => {
+                console.log("Contract Node/ID = " + violation.node.data.atr.name + " Violation: "+ violation.message);
+            })
+            
+            // Create file based off Violations
+            new Promise(() => {return violations}).then(function (result) {
+                // Now persist them as files
+                artifact = self.blobClient.createArtifact('FSMGenerator')
+                return artifact.addFiles(result.files)
+            })
+            .then(function (fileHashes) {
+                fileHashes.forEach(function (fileHash) {
+                  self.result.addArtifact(fileHash)
+                })
+                return artifact.save()
+            })
+            .then(function (artifactHash) {
+                // self.result.addArtifact(artifactHash);
+                self.sendNotification({message: "There was a parsing error please fix your code and try again", severity:"error"});
+                self.result.setSuccess(true)
+                callback(null, self.result)
+                return;
+            })
+            .catch(function (err) {
+                self.logger.error(err.stack)
+                // Result success is false at invocation.
+                callback(err, self.result)
+            })
+            return;
+        }
         // Loading the children however requires data that is not (necessarily) available
         self.core.loadChildren(self.activeNode, function (err, children) {
             if (err) {
@@ -71,8 +109,22 @@ define([
                 self.core.deleteNode(children[i]);
             }
 
+            const functions = FSMGenerator.prototype.getAllFunctions(codeContent);
+            var imports = FSMGenerator.prototype.getImports(codeContent);
+            var resources = FSMGenerator.prototype.getResouces(codeContent);
+
+            if (imports.length > 0)
+                imports = imports.join('\n');
+            else
+                imports = "";
+
+            if (resources.length > 0)
+                resources = resources.join('\n');
+            else
+                resources = "";
+
             var state = self.core.createChild(self.activeNode, self.core.getAllMetaNodes(self.activeNode)['/m/9']);
-            FSMGenerator.prototype.getAllFunctions(codeContent).forEach(fn => {
+            functions.forEach(fn => {
                 var transition = self.core.createChild(self.activeNode, self.core.getAllMetaNodes(self.activeNode)['/m/A']);
                 self.core.setAttribute(state, 'name', 'core');
                 self.core.setAttribute(transition, 'name', fn.name);
@@ -92,8 +144,8 @@ define([
             self.core.setAttribute(initState, 'name', 'C');
 
             const contractName = self.core.getAttribute(self.activeNode,'name');
-            self.core.setAttribute(self.activeNode, 'imports', FSMGenerator.prototype.getImports(codeContent).join('\n'));
-            self.core.setAttribute(self.activeNode, 'resources', FSMGenerator.prototype.getResouces(codeContent).join('\n'));
+            self.core.setAttribute(self.activeNode, 'imports', imports);
+            self.core.setAttribute(self.activeNode, 'resources', resources);
 
             self.core.setAttribute(createTransition, 'name', "start");
             self.core.setAttribute(createTransition, 'guards', "exists<"+contractName+"<Currency>>("+contractName+"_addr)");
@@ -126,11 +178,11 @@ define([
 
 
     FSMGenerator.prototype.getResouces = function (codeContent) {
-        return codeContent.match(/resource.+?(?=})+}/g)
+        return codeContent.match(/resource.+?(?=})+}/g) || [];
     };
 
     FSMGenerator.prototype.getImports = function (codeContent) {
-        return codeContent.match(/use.+?(?=;)/g);
+        return codeContent.match(/use.+?(?=;)/g) || [];
     };
 
     FSMGenerator.prototype.getAllFunctions = function (codeContent) {
@@ -169,6 +221,46 @@ define([
         }
         return fNames;
     };
+
+    FSMGenerator.prototype.parseResult = function (contractNode, code) {
+        const self = this
+        const tree = self.parser.parse(code)
+        var violations = [];
+    
+        const cursor = tree.walk()
+        let moreSiblings = true
+        let moreChildren = true
+        let depth = 0
+        cursor.gotoFirstChild()
+    
+        // DFS - Visit all children, and backtrack based on depth
+        while (moreSiblings || depth > 0) {
+          while (moreChildren) {
+            if (cursor.nodeType === 'ERROR') {
+              violations.push({
+                node: contractNode,
+                message: 'Unexpected : ' + code.slice(cursor.startIndex, cursor.endIndex)
+              })
+            }
+            moreChildren = cursor.gotoFirstChild()
+            // Only increment if I went deeper
+            if (moreChildren) {
+              depth += 1
+            }
+          }
+    
+          // move to available sibling
+          moreSiblings = cursor.gotoNextSibling()
+          if (moreSiblings) {
+            moreChildren = true
+          } else {
+            // no more siblings backtrack
+            cursor.gotoParent()
+            depth -= 1
+          }
+        }
+        return violations
+    }    
 
     return FSMGenerator;
 });
