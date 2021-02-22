@@ -1,67 +1,64 @@
-/*globals define, $, _*/
-/*jshint browser: true, camelcase: false*/
+/* globals define, $, _ */
+/* jshint browser: true, camelcase: false */
 
 define([
-    'js/DragDrop/DragHelper',
-    'js/Widgets/DiagramDesigner/DiagramDesignerWidget'
+  'js/DragDrop/DragHelper',
+  'js/Widgets/DiagramDesigner/DiagramDesignerWidget'
 ], function (DragHelper, DiagramDesignerWidget) {
+  'use strict'
 
-    'use strict';
+  const ModelEditorWidget = function (container, params) {
+    params = params || {}
+    params.loggerName = 'gme:Widgets:ModelEditor:ModelEditorWidget'
 
-    var ModelEditorWidget;
+    params.tabsEnabled = true
+    params.addTabs = false
+    params.deleteTabs = false
+    params.reorderTabs = false
 
-    ModelEditorWidget = function (container, params) {
-        params = params || {};
-        params.loggerName = 'gme:Widgets:ModelEditor:ModelEditorWidget';
+    DiagramDesignerWidget.call(this, container, params)
 
-        params.tabsEnabled = true;
-        params.addTabs = false;
-        params.deleteTabs = false;
-        params.reorderTabs = false;
+    this.logger.debug('ModelEditorWidget ctor')
+  }
 
-        DiagramDesignerWidget.call(this, container, params);
+  _.extend(ModelEditorWidget.prototype, DiagramDesignerWidget.prototype)
 
-        this.logger.debug('ModelEditorWidget ctor');
-    };
+  ModelEditorWidget.prototype._afterManagersInitialized = function () {
+    // turn on open btn
+    this.enableOpenButton(true)
+  }
 
-    _.extend(ModelEditorWidget.prototype, DiagramDesignerWidget.prototype);
+  ModelEditorWidget.prototype.getDragEffects = function (selectedElements, event) {
+    const ctrlKey = event.ctrlKey || event.metaKey
+    const altKey = event.altKey
+    const shiftKey = event.shiftKey
+    let effects = DiagramDesignerWidget.prototype.getDragEffects.apply(this, [selectedElements, event])
 
-    ModelEditorWidget.prototype._afterManagersInitialized = function () {
-        //turn on open btn
-        this.enableOpenButton(true);
-    };
+    // ALT_KEY --> DRAG_CREATE_INSTANCE
+    if (!ctrlKey && altKey && !shiftKey) {
+      effects = [DragHelper.DRAG_EFFECTS.DRAG_CREATE_INSTANCE]
+    } else if (!ctrlKey && !altKey && shiftKey) {
+      effects = [DragHelper.DRAG_EFFECTS.DRAG_CREATE_POINTER]
+    }
 
-    ModelEditorWidget.prototype.getDragEffects = function (selectedElements, event) {
-        var ctrlKey = event.ctrlKey || event.metaKey,
-            altKey = event.altKey,
-            shiftKey = event.shiftKey,
-            effects = DiagramDesignerWidget.prototype.getDragEffects.apply(this, [selectedElements, event]);
+    return effects
+  }
 
-        //ALT_KEY --> DRAG_CREATE_INSTANCE
-        if (!ctrlKey && altKey && !shiftKey) {
-            effects = [DragHelper.DRAG_EFFECTS.DRAG_CREATE_INSTANCE];
-        } else if (!ctrlKey && !altKey && shiftKey) {
-            effects = [DragHelper.DRAG_EFFECTS.DRAG_CREATE_POINTER];
-        }
+  /* OVERWRITE DiagramDesignerWidget.prototype._dragHelper */
+  ModelEditorWidget.prototype._dragHelper = function (el, event, dragInfo) {
+    const helperEl = DiagramDesignerWidget.prototype._dragHelper.apply(this, [el, event, dragInfo])
+    const dragEffects = DragHelper.getDragEffects(dragInfo)
 
-        return effects;
-    };
+    if (dragEffects.length === 1) {
+      if (dragEffects[0] === DragHelper.DRAG_EFFECTS.DRAG_CREATE_INSTANCE) {
+        helperEl.html($('<i class="glyphicon glyphicon-share-alt"></i>')).append(' Create instance...')
+      } else if (dragEffects[0] === DragHelper.DRAG_EFFECTS.DRAG_CREATE_POINTER) {
+        helperEl.html($('<i class="glyphicon glyphicon-share"></i>')).append(' Create pointer...')
+      }
+    }
 
-    /* OVERWRITE DiagramDesignerWidget.prototype._dragHelper */
-    ModelEditorWidget.prototype._dragHelper = function (el, event, dragInfo) {
-        var helperEl = DiagramDesignerWidget.prototype._dragHelper.apply(this, [el, event, dragInfo]),
-            dragEffects = DragHelper.getDragEffects(dragInfo);
+    return helperEl
+  }
 
-        if (dragEffects.length === 1) {
-            if (dragEffects[0] === DragHelper.DRAG_EFFECTS.DRAG_CREATE_INSTANCE) {
-                helperEl.html($('<i class="glyphicon glyphicon-share-alt"></i>')).append(' Create instance...');
-            } else if (dragEffects[0] === DragHelper.DRAG_EFFECTS.DRAG_CREATE_POINTER) {
-                helperEl.html($('<i class="glyphicon glyphicon-share"></i>')).append(' Create pointer...');
-            }
-        }
-
-        return helperEl;
-    };
-
-    return ModelEditorWidget;
-});
+  return ModelEditorWidget
+})
