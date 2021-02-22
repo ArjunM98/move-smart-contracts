@@ -61,40 +61,18 @@ define([
     FSMGenerator.prototype.main = function (callback) {
         // Use this to access core, project, result, logger etc from PluginBase.
         const self = this;
-        const codeContent = self.core.getAttribute(self.activeNode,'customMoveCode');
+        var codeContent = self.core.getAttribute(self.activeNode,'customMoveCode') || "";
 
         var violations = FSMGenerator.prototype.parseResult.call(self, self.activeNode, codeContent);
-        if (violations.length > 0 || other.length > 0){
+        // Notify User of violations
+        if (violations.length > 0){
             console.log("There are violations");
             violations.forEach(violation => {
                 console.log("Contract Node/ID = " + violation.node.data.atr.name + " Violation: "+ violation.message);
+                self.createMessage(violation.node, violation.message, 'error')
             })
-            
-            // Create file based off Violations
-            new Promise(() => {return violations}).then(function (result) {
-                // Now persist them as files
-                artifact = self.blobClient.createArtifact('FSMGenerator')
-                return artifact.addFiles(result.files)
-            })
-            .then(function (fileHashes) {
-                fileHashes.forEach(function (fileHash) {
-                  self.result.addArtifact(fileHash)
-                })
-                return artifact.save()
-            })
-            .then(function (artifactHash) {
-                // self.result.addArtifact(artifactHash);
-                self.sendNotification({message: "There was a parsing error please fix your code and try again", severity:"error"});
-                self.result.setSuccess(true)
-                callback(null, self.result)
-                return;
-            })
-            .catch(function (err) {
-                self.logger.error(err.stack)
-                // Result success is false at invocation.
-                callback(err, self.result)
-            })
-            return;
+            throw new Error( self.activeNode + ' has ' + violations.length + ' violation(s). ' +
+            'See messages for details.')
         }
         // Loading the children however requires data that is not (necessarily) available
         self.core.loadChildren(self.activeNode, function (err, children) {
@@ -124,10 +102,11 @@ define([
                 resources = "";
 
             var state = self.core.createChild(self.activeNode, self.core.getAllMetaNodes(self.activeNode)['/m/9']);
+            self.core.setAttribute(state, 'name', 'core');
+
             functions.forEach(fn => {
                 var transition = self.core.createChild(self.activeNode, self.core.getAllMetaNodes(self.activeNode)['/m/A']);
-                self.core.setAttribute(state, 'name', 'core');
-                self.core.setAttribute(transition, 'name', fn.name);
+                self.core.setAttribute(transition, 'name', fn.name.replace('fun ', ''));
                 self.core.setAttribute(transition, 'statements', fn.code);
                 self.core.setAttribute(transition, 'input', fn.inputs);
                 self.core.setAttribute(transition, 'output', fn.outputs);
@@ -182,7 +161,7 @@ define([
     };
 
     FSMGenerator.prototype.getImports = function (codeContent) {
-        return codeContent.match(/use.+?(?=;)/g) || [];
+        return codeContent.match(/use.+?(?=;)+;/g) || [];
     };
 
     FSMGenerator.prototype.getAllFunctions = function (codeContent) {
