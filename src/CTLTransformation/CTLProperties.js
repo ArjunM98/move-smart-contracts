@@ -5,6 +5,39 @@ define([], function () {
   const CTLProperties = function () { }
   CTLProperties.prototype.constructor = CTLProperties
 
+  CTLProperties.prototype.parseProperties = function (model, properties) {
+    const parsedProperties = []
+    let clauses; let actions
+    let property; let clause; let action; let actionName
+    let transitions; let transition
+
+    for (property of properties.split(';')) {
+      clauses = [] // collect all clauses for this property
+      for (clause of property.split('#')) {
+        actions = [] // collect all actions for this clause
+        for (action of clause.split('|')) {
+          actionName = action.replace(/\s/g, '') // all comparisons will be whitespace-agnostic
+          transitions = []
+          for (transition of model.transitions) { // for each transition, check if it matches the action specification
+            if (transition.actionName !== undefined && transition.actionName.replace(/[;\s]+/g, '') === actionName) {
+              transitions.push(transition.actionName)
+            }
+          }
+          if (transitions.length !== 1) { // action specification is ambiguous since multiple transitions match it
+            if (transitions.length === 0) {
+              throw new Error('Could not find action: ' + action + ' Possible reason: Statement was specified without function name.')
+            }
+            throw new Error('Ambiguous action (multiple instances occured): ' + action)
+          }
+          actions.push(transitions[0]) // single transition matches the action specification
+        }
+        clauses.push(actions) // push this clause
+      }
+      parsedProperties.push(clauses) // push this property
+    }
+    return parsedProperties
+  }
+
   // Generate template that confirms <action> cannot be reached after <action>
   CTLProperties.prototype.generateFirstTemplateProperties = function (bipTransitionsToSMVNames, actionNamesToTransitionNames, properties) {
     let property; let clause; let propertiesSMV = ''

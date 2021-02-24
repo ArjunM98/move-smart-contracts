@@ -10,7 +10,9 @@ module.exports = {
     'plugin:json/recommended'
   ],
   ignorePatterns: [
-    '/src/visualizers/panels/ReactVisualizerBundles'
+    '/src/visualizers/panels/ReactVisualizerBundles',
+    '/src/visualizers/panels/ModelEditor/',
+    '/src/visualizers/widget/ModelEditor/'
   ],
   parserOptions: {
     ecmaVersion: 12
