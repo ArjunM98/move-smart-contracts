@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Container } from '@material-ui/core';
-import Editor from '@monaco-editor/react';
+import AceEditor from "react-ace";
+
+import "ace-builds/src-noconflict/mode-rust";
+import "ace-builds/src-noconflict/theme-monokai";
 
 const MoveCodeEditor = ({ gmeClient, initialState }) => {
 
@@ -8,6 +11,9 @@ const MoveCodeEditor = ({ gmeClient, initialState }) => {
     const [error, setError] = useState(null);
     const [code, setCode] = useState("// Write your code here");
 
+    function onEditorChange(newValue) {
+        setCode(newValue);
+    }
 
     // componentDidMount() sideEffect
     useEffect(() => {
@@ -53,6 +59,11 @@ const MoveCodeEditor = ({ gmeClient, initialState }) => {
         }
     };
 
+    const saveCode = () => {
+        const contract = gmeClient.getNode(initialState.activeNode);
+        gmeClient.setAttribute(contract.getId(), "customMoveCode", code);
+    }
+
     const renderContent = () => (
         error ? <h3> {error} </h3> :
             <Container>
@@ -88,11 +99,34 @@ const MoveCodeEditor = ({ gmeClient, initialState }) => {
                     View Generated Code
                 </Button>
 
-                <Editor
-                    height="65vh"
-                    language="rust"
+                <Button
+                    style={{ marginRight: "1rem", marginBottom: "1rem", marginLeft: "315px" }}
+                    variant="contained"
+                    color="secondary"
+                    size="medium"
+                    onClick={saveCode}
+                >
+                    Save Code
+                </Button>
+
+                <AceEditor
+                    width="750px"
+                    mode="rust"
+                    name="Move Code Editor"
+                    theme="monokai"
                     value={code}
-                    theme="dark"
+                    fontSize={12}
+                    highlightActiveLine={true}
+                    showPrintMargin={true}
+                    showGutter={true}
+                    onChange={onEditorChange}
+                    setOptions={{
+                        enableBasicAutocompletion: true,
+                        enableLiveAutocompletion: false,
+                        enableSnippets: false,
+                        showLineNumbers: true,
+                        tabSize: 2,
+                    }}
                 />
             </Container>
     );
