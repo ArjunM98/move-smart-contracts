@@ -89,3 +89,5 @@ docker-compose up -d
 This repository was built ontop of the [VeriSolid smart-contracts](https://github.com/anmavrid/smart-contracts) repository to create a similar interface and configuration set-up. We also made use of the [webgme-react-viz](https://github.com/pmeijer/webgme-react-viz) repository as a wrapper to set-up a visualizer as a react component. In terms of the verification process, VeriSolid's implementation is adapted for the Move language.
 
 This project runs under the [MIT License](LICENSE).
+
+All Copyright information of used dependencies and transistive dependencies can be found in [license.json](licenses.json).
