@@ -97,16 +97,17 @@ define([
 
       const state = self.core.createChild(self.activeNode, self.core.getAllMetaNodes(self.activeNode)['/m/9'])
       self.core.setAttribute(state, 'name', 'core')
-
+      let counter = 0
       functions.forEach(fn => {
         const transition = self.core.createChild(self.activeNode, self.core.getAllMetaNodes(self.activeNode)['/m/A'])
-        self.core.setAttribute(transition, 'name', fn.name.replace('fun ', ''))
+        self.core.setAttribute(transition, 'name', fn.name.replace('fun ', '').trim() + counter)
         self.core.setAttribute(transition, 'statements', fn.code)
         self.core.setAttribute(transition, 'input', fn.inputs)
         self.core.setAttribute(transition, 'output', fn.outputs)
         // self.core.setAttribute(transition, 'tags', fn.tags);
         self.core.setPointer(transition, 'src', state)
         self.core.setPointer(transition, 'dst', state)
+        counter++
       })
 
       // Creation of initial state node
