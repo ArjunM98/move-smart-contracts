@@ -1,6 +1,9 @@
 # move-smart-contracts
 Tool for the synthesis and verification of Move smart contracts
 
+For more information on the background and development of the following project please see [here](docs/ECE496-Final-Report.pdf)
+
+
 ## Install Dependencies
 
 Install the following: 
